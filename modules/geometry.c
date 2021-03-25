@@ -11,6 +11,8 @@ version used for computing.
 static int D=1; // D = Dimension
 static int N=1; // N = Number of lattice sites in one direction (per dimension)
 static int lattice_spacing=1; // lattice spacing fixed to 1 in project!
+static int boundary_condition;
+static int *bc_ptr=NULL;
 
 
 void set_params(int argc, char const *argv[]) {
@@ -19,10 +21,25 @@ void set_params(int argc, char const *argv[]) {
     printf("[geomerty.c | set_params()] ARRR. Number of lattice points in one direction needs to be EVEN!\n");
     exit(-1);
   }
+  if (D < 1) {
+    printf("[geometry.c | set_params()] You need at least 1 dimension, smh.\n");
+    exit(-1);
+  }
+  if (boundary_condition > 1) {
+    printf("[geometry.c | set_params()] Boundary Condition out of bounds. Should be 0 for Dirichlet and 1 for periodic. \n");
+    exit(-1);
+  }
   N = atoi(argv[1]);
-  d = atoi(argv[2]);
+  D = atoi(argv[2]);
+  if ()
+  boundary_condition = atoi(argv[3]);
+  bc_ptr = &boundary_condition;
 }
 
+
+/*******************************************************************************
+Spin Struct (is this something for the header?)
+*******************************************************************************/
 struct spinstruct {
   /*
   structure that contains all values belonging to one lattive site:
@@ -45,6 +62,62 @@ inline void spinstruct_free(spinstruct spnstrct) {
   /* function to deallocate (free) memory used for spinstruct spnstrct */
   free(spstrct.coord);
   free(spstrct.nnidx);
+}
+
+
+/*******************************************************************************
+Functions for distance calculation
+*******************************************************************************/
+inline double coord_distance_dirichlet(spinstruct *spnstrct1, spinstruct *spnstrct2) {
+  /*
+    function that caluates distance btw 2 spins for dirichlet bc
+    input are spinstructs -> coordinates already known (using vector substr.)
+  */
+  double sum;
+  for (int i=0; i<D; i++) {
+    sum += (spnstrct1.coord[i] - spnstrct2.coord[i])*(spnstrct1.coord[i] - spnstrct2.coord[i]);
+  }
+  return sqrt(sum);
+}
+
+inline double coord_distance_periodic(spinstruct *spnstrct1, spinstruct *spnstrct2) {
+  /*
+    funtion that calclulates distacnce btw 2 spins for periodic bc
+    input are spinstructs -> coordinates already known
+    algo:
+      1. dx = |x1_a - x1_b| for all xi in array[D]
+      2. if dx > N/2: reduce dx for N -> dx = dx - N
+      3. sum =  dx1^2 + dx2^2 + ... ->  sum can be calculated in same loop
+      4. return sqrt(sum) (pythagoras)
+  */
+  double sum;
+  int deltaxi[D];
+  for (int i=0; i<D; i++) {
+    deltaxi[i] = abs(spnstrct1[i] - spnstrct2[i]);
+    if (deltaxi[i] > N/2) { deltaxi -= N; }
+    sum += dx*dx;
+  }
+  return sqrt(sum);
+}
+
+double coord_distance(spinstruct *spnstrct1, spinstruct *spnstrct2) {
+  /*
+    wrapper function to calculate the distance between two indeces
+    needs some way to respect boundary conditions
+    returns the distance as double
+  */
+  double dist;
+  if (bc_ptr=NULL) {
+    printf("[geometry.c | coord_distance_blackwhite()] ERROR. Boundary Condition was not set!\n");
+    exit(-1);
+  }
+  if (boundary_condition==0) { dist = coord_distance_dirichlet_blackwhite(spnstrct1, spnstrct2); }
+  else if (boundary_condition==1) { dist = coord_distance_periodic_blackwhite(spnstrct1, spnstrct2); }
+  else {
+    printf("[geometry.c | coord_distance_blackwhite()] Upsi something else went wrong with the bc but it got set with the right value.\n");
+    exit(-1);
+  }
+  return dist;
 }
 
 /*******************************************************************************
@@ -79,7 +152,7 @@ void set_spinarray_blackwhite() {
   set_params();
   spinstruct_arr = (spinstruct) malloc(sizeof(spinstruct)*pow(N, D));
 
-  for (i=0; i<pow(N, D), i++){
+  for (int i=0; i<pow(N, D), i++){
     spinstruct_alloc(spinstruct_arr[i]);
     spinstruct_arr[i].idx = i;
     spinstruct_arr[i].spinval = function_that_assigns_spinvalue();
@@ -107,15 +180,22 @@ inline int isequal(int x) {
   return outcome;
 }
 
+int np_of_x(int *x) { // also inline?
+  /* x = coordinate vector and np is index in black white ordering*/
+  int np;
+  np = (int)(parity(x)*pow(N,D)+n_of_x(x))/2;
+  return np;
+}
+
 // maybe not set but "idx2coord" or something, as it returns something?
 //inline void set_coord_blackwhite(); ??
 void set_coord_blackwhite(int np, int *x) {
   /* np = current index, x = coordinate vector */
   int xprime[D]; // dynamic allocation better?
-  for (mu=0; mu<D; mu++) {
+  for (int mu=0; mu<D; mu++) {
     xprime[mu] = ( 2*np-(2*np/pow(N,D))*pow(N,D)/pow(N,mu) )%N;
   }
-  for (xi=0; xi<D; xi++) {
+  for (int xi=0; xi<D; xi++) {
     if (xi==0) { x[xi] = ( xprime[xi]+(np_parity(np)+parity(xprime))%2 )%N; }
     else { x[xi] = ( xprime[xi]+(np_parity(np)+parity(xprime))%2 * isequal(xprime[mu-1]) )%N; }
   }
@@ -123,84 +203,65 @@ void set_coord_blackwhite(int np, int *x) {
 
 //inline void set_nnarray_blackwhite(); ??
 void set_nnarray_blackwhite(spinstruct *spnstrct) {
-  // GOAL: creates a 2d array: first dimension are lattice point indeces and second dimension are the next neighbors indeces
-  //        when summing over nn, one can call this array to recover the lattice points next neighbor indeces (of the spin array)
-  // WHY do i need 2 dimensions? As i wrote it above, the indeces would already work??? -> this basically are the two dimensions
-  // nn[N^d][2d] two indexed array e.g. nn[4][xforward] = a value that i have to fill
-  // the value should be the next neighbor index (depending on the indexing method)
-  // PARAMTERS: rnng_idx is current index the spinstruct that is also a paramter;
-  //            spnstrct is current lattice index' spinstruct & spnstrct.nnidx is 2*d array
-  int nnx[d];
-  for (j=0; j<D; j++) { nnx[j] = spnstrct.idx[j]; }
-
-  for (i=0; i<D; i++) {
-    nnx[i] = spnstrct.idx[i]+1; // could also be nnx[i]+1 (would be the same)
-    spnstrct.nnidx[i] = np_of_x(nnx);
-    nnx[i] = spnstrct.idx[i]-1;
-    spnstrct.nnidx[i+1] = np_of_x(nnx);
-    nnx[i] = spnstrct.idx[i];
-  }
-}
-
-int np_of_x(int *x) {
-  /* x = coordinate vector and np is index in black white ordering*/
-  int np;
-  np = (int)(parity(x)*pow(N,D)+n_of_x(x))/2;
-  return np;
-}
-
-double coord_distance_blackwhite() {
+    // WHAT ABOUT BOUNDARY CONDITION?
   /*
-    function to calculate the distance between two indeces
-    needs some way to respect boundary conditions
+    function that sets the next neigbor indeces into a given spinstruct
+    index array ordering:
+      nnidx = [0, 1, 2, 3, ..., 2D-1, 2D] = [x0+1, x0-1, x1+1, x1-1,..., 2D+1, 2D-1]
+    algo:
+      1. copy coordinates to new array
+      2. create new corrd array (x0+1, x0) & get index to assign to nnidx
+      2. create new corrd array (x0-1, x0) & get index to assign to nnidx
+      3. repeat in steps of 2 for i < D
   */
-}
+  int nnx[d];
+  for (int j=0; j<D; j++) { nnx[j] = spnstrct.coord[j]; }
 
-void get_coord_blackwhite(int n, int *coord) {
-  // function returns specific coordinate for asked mu? and np
-  // returns coordinate tuple (list, or array,...?)
-  // tuple is d dimensional
-  for (i=0; i<D; i++) {
-    coord[i] =
+  for (int i=0; i<D; i+=2) {
+    nnx[i] = spnstrct.coord[i]+1; // could also be nnx[i]+1 (would be the same)
+    spnstrct.nnidx[i] = np_of_x(nnx);
+    nnx[i] = spnstrct.coord[i]-1;
+    spnstrct.nnidx[i+1] = np_of_x(nnx);
+    nnx[i] = spnstrct.coord[i];
   }
 }
-
-int get_nncoord_blackwhite(int n) {
-  // funtion returns index of next neighbor of input index
-  // returns array of the neighbor indeces
-}
-
 
 /*******************************************************************************
 LEXOGRAPHIC ORDERING
 *******************************************************************************/
-void set_lexo_index() { // DOES IT?
-  //creates an array with the lattice point indices in lexographical order
-  // n(X) = sum_mu=0^d-1 x_mu * N^mu * 1/a
-  double complex *n, **nn;
-  n = (double complex*) malloc(dtype(double complex)*pow(N,d)); // double complex surely wrong
-  nn = (double complex*) malloc(dtype(double complex)*pow(N,d)*(2*d));
+void set_spinarray_lexo() {
+  // GOAL: assigns elements (spin values) to an array in a way that it contains all spin values for the whole lattice
+  //        this array can be called with the correct index and returns the element at this index
+  //          that is: the spin value of spin at this lattice site where index points to
+  // ordering of lattice sites to index is lexographic -> counted through in one direction
+  // array is N^d long
+  // array elements are spinstructs with spinvalue, own index, next neighbor index & own coordinates
+  /*
+  1. set_params to get N and d
+  2. allocate arrray of structs with size N^d
+  3. loop through array and assign each point:
+    -  the corresponding coord.
+    -  a spin value
+    - its index
+    - next neighbor indeces (maybe by calling the corresponding function)
+  */
+  spinstruct *spinstruct_arr;
+  set_params();
+  spinstruct_arr = (spinstruct) malloc(sizeof(spinstruct)*pow(N, D));
 
-  for (int i=0; i<N; i++) {
-    n[i] = i;
+  for (int i=0; i<pow(N, D), i++){
+    spinstruct_alloc(spinstruct_arr[i]);
+    spinstruct_arr[i].idx = i;
+    spinstruct_arr[i].spinval = function_that_assigns_spinvalue();
+    set_coord_lexo(i, spinstruct_arr[i].coord);
+    set_nnarray_lexo(spinstruct_arr[i]);
+  }
+}
 
-    /*
-      specific for 2 dim
-      [0,1,2,3] = [xnext, xprevious, ynext/up, yprev/down]
-      what about the boundary conditions??
-    */
-    n[i][0] = i+1;
-    n[i][1] = i-1;
-    n[i][2] = i+N;
-    n[i][3] = i-N;
-
-    /* for all dimensions d
-      [0,1,2,3,4,5,...] = [xnext, xprevious, ynext/up, yprev/down, znext/forward, zprev/behind,...]
-      nn[i][j] = i + (-1)^j * N^(j/2) with integer devision
-    */
-    for (int j=0; j<2*d; j++) {
-      nn[i][j] = i + pow(-1, j) * pow(N, (j/2));
-    }
+void set_coord_lexo(int n, int *x) {
+  /* n = current index, x = coordinate vector */
+  for (int mu=0; mu<D; mu++) {
+    x[mu] = (n/pow(N,mu))%N;
   }
 }
 
@@ -211,21 +272,20 @@ int n_of_x(int *x) {
   return sum;
 }
 
-int get_lexo_coordinate(int n) {
-  // function returns specific coordinate for asked mu and n
-  // x_mu(n) = (n/N^mu) % N with integer devision!
+void set_nnarray_lexo(spinstruct *spnstrct) {
+  // WHAT ABOUT BOUNDARY CONDITION
+  /*
+    function that sets the next neigbor indeces into a given spinstruct
+    index array ordering:
+      nnidx = [0, 1, 2, 3, ..., 2D-1, 2D] = [x0+1, x0-1, x1+1, x1-1,..., 2D+1, 2D-1]
+      algo:
+      1. nnidx[0] = nnidx+N^0 & nnidx[1] = nnidx[1] = nnidx-N^0
+      2. keep going for power: mu<D and indexing in steps of 2 and smaller 2D/2=D
+  */
+  for (int mu=0; m<D; mu++) {
+    for (int i=0; i<D; i+=2) {
+      spnstrct.nnidx[i] += pow(N,mu);
+      spnstrct.nnidx[i+1] -= pow(N,mu);
+    }
+  }
 }
-
-void coord_from_lexo(int n, int x[]) {
-  // loop that fills in coordinate array
-  // x array is d dimensional
-}
-
-int set_lexo_nextneighbor(int n, decision value for +1 or -1 neighbor ) {
-  // function to return the next neighbor of a given index
-  // should be able to return next (+1) or previous (-1) neighbor
-  // should this be a seperate function? should this take pointers because of array
-}
-
-
-// something to create necessary arrays?
