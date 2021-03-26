@@ -46,16 +46,17 @@ struct spinstruct {
   own index, spin value at this lattice site, own coordinates (array/list?), nn index array which is only 2D
   */
   int idx;
-  double spinval;
-  double coord;
-  double nnidx; // doesnt need to be 2d as i am using array of structs
+  double spinval; // maybe just int
+  int *coord;
+  int *nnidx; // doesnt need to be 2d as i am using array of structs
 }
 
 inline void spinstruct_alloc(spinstruct spstrct) {
   //allocate only for arrays?
-  spstrct.coord = (double *) malloc(sizeof(double)*D);
+  // safety feature to not allocate twice (initialzed pointers in struct are NULL )
+  spstrct.coord = (int *) malloc(sizeof(int)*D);
   // spstrct.nnidx = (int *) malloc(sizeof(int)*pow(N,D)*2*D); // allocate 2d array!!! see above
-  spstrct.nnidx = (int *) malloc(2*D);
+  spstrct.nnidx = (int *) malloc(sizeof(int)*2*D);
 }
 
 inline void spinstruct_free(spinstruct spnstrct) {
@@ -93,7 +94,7 @@ inline double coord_distance_periodic(spinstruct *spnstrct1, spinstruct *spnstrc
   double sum;
   int deltaxi[D];
   for (int i=0; i<D; i++) {
-    deltaxi[i] = abs(spnstrct1[i] - spnstrct2[i]);
+    deltaxi[i] = abs(spnstrct1.coord[i] - spnstrct2.coord[i]);
     if (deltaxi[i] > N/2) { deltaxi -= N; }
     sum += dx*dx;
   }
@@ -161,7 +162,7 @@ void set_spinarray_blackwhite() {
   }
 }
 
-inline int parity(int *x) {
+inline int parity(int *x) { // static inline if only needed in this file -> make declaration of all function at the top of file (with small comment and maybe even line)
   int sum;
   for (xi=0; xi<D; xi++) {
     sum += x[xi];
@@ -173,7 +174,7 @@ inline int np_parity(int np) {
   return ((int) 2*np) / ((int) pow(N,D));
 }
 
-inline int isequal(int x) {
+inline int iszero(int x) { // (x==0)
   int outcome;
   if (x==0) { outcome=1; }
   else { outcome=0; }
@@ -197,12 +198,12 @@ void set_coord_blackwhite(int np, int *x) {
   }
   for (int xi=0; xi<D; xi++) {
     if (xi==0) { x[xi] = ( xprime[xi]+(np_parity(np)+parity(xprime))%2 )%N; }
-    else { x[xi] = ( xprime[xi]+(np_parity(np)+parity(xprime))%2 * isequal(xprime[mu-1]) )%N; }
+    else { x[xi] = ( xprime[xi]+(np_parity(np)+parity(xprime))%2 * iszero(xprime[mu-1]) )%N; }
   }
 }
 
 //inline void set_nnarray_blackwhite(); ??
-void set_nnarray_blackwhite(spinstruct *spnstrct) {
+void set_nnarray_blackwhite(spinstruct *spnstrct) { // für lexo und blackwhite nutzen, dann mit wrapper funtion für np_of_x und n_of_x
     // WHAT ABOUT BOUNDARY CONDITION?
   /*
     function that sets the next neigbor indeces into a given spinstruct
@@ -223,6 +224,9 @@ void set_nnarray_blackwhite(spinstruct *spnstrct) {
     nnx[i] = spnstrct.coord[i]-1;
     spnstrct.nnidx[i+1] = np_of_x(nnx);
     nnx[i] = spnstrct.coord[i];
+    // falls nnx[i] = N,-1 -> fallunterscheidung ob dirichlet / periodic
+    // if dirichlet: einen festen wert, der nicht im gitter für spätere Fallunterscheidung (Variable: nosite = zb -1) -> wenn nn später benutzt mache if condition für nosite, im fall von nosite: kein nachbar element
+    // if peridic: (coord+N)%N to reappear on coordinate of other side of lattice
   }
 }
 
