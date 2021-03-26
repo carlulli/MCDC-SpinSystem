@@ -5,37 +5,45 @@ version used for computing.
 
 /*******************************************************************************
 List of functions. (some declared here (S), others declared in header (H))
-1. set_params(argc, argv[]) (H)
+1. void set_params(argc, argv[]) (H)
     - sets all nevessary parameters to create geometry
-2. get_N()
+2. int get_N()
     - returns N
-3. get_D()
+3. int get_D()
     - returns D
-4. spinstruct_alloc(spinstruct spstrct) (S)
+4. static void spinstruct_alloc(spinstruct spstrct) (S)
     - allocates memory for struct arrays coord and nextneighbor_index
-5. spinstruct_free(spinstruct spnstrct) (S)
+5. static inline void spinstruct_free(spinstruct spnstrct) (S)
     - frees for struct allocated memory
-6. spinarray_free(spinstruct *spnstrct_arr) (H)
+6. void spinarray_free(spinstruct *spnstrct_arr) (H)
     - frees memory for array of struct (of size N^D) (wrapper of 3.)
-7. coord_distance_dirichlet(spinstruct *spnstrct1, spinstruct *spnstrct2) (S)
+7. static inline double coord_distance_dirichlet(spinstruct *spnstrct1, spinstruct *spnstrct2) (S)
     - calculates distance btw 2 spinindeces for Dirichlet bc
-8. coord_distance_periodic(spinstruct *spnstrct1, spinstruct *spnstrct2) (S)
+8. static inline double coord_distance_periodic(spinstruct *spnstrct1, spinstruct *spnstrct2) (S)
     - calculates distance btw 2 spinindeces for periodic bc
-9. coord_distance(spinstruct *spnstrct1, spinstruct *spnstrct2) (H)
+9. double coord_distance(spinstruct *spnstrct1, spinstruct *spnstrct2) (H)
     - calculates distance btw 2 spinindeces (wrapper for 5. & 6.)
-10. set_spinarray_blackwhite(spinstruct *spinstruct_arr) (S)
+10. static inline int n_of_x_lexo(int *x) (S)
+    - calculates index of coordinate for lexo ordering
+11. static inline int n_of_x_blackwhite(int *x) (S)
+    - calculates index of coordinate for blackwhite ordering
+12. static int n_of_x(int *x) (S)
+    - returns index of coordinate for both orderings (wrapper of 10. and 11.)
+13. static void set_nnarray(spinstruct *spnstrct) (S)
+    - sets a next neighbor index array for given struct
+14. static void set_spinarray_blackwhite(spinstruct *spinstruct_arr) (S)
     - creates structs and assigns values for given array in blackwhite ordering
-11. parity(int *x) (S)
+15. static inline int parity(int *x) (S)
     - returns parity of coordinate array
-12. np_parity(int np) (S)
+16. static inline int np_parity(int np) (S)
     - returns special parity 2np/n^D
-13. set_coord_blackwhite(int np, int *x) (S)
+17. static void set_coord_blackwhite(int np, int *x) (S)
     - sets the coordinates in coordinate vector for given index for blackwhite ordering
-14. void set_spinarray_lexo(spinstruct *spinstruct_arr) (S)
+18. static void void set_spinarray_lexo(spinstruct *spinstruct_arr) (S)
     - creates structs and assigns values for given array in lexographic ordering
-15. set_coord_lexo(int n, int *x) (S)
+19. static inline void set_coord_lexo(int n, int *x) (S)
     - sets the coordinates in coordinate vector for given index for lexographic ordering
-16. set_spinarray(spinstruct *spinstruct_arr) (H)
+20. void set_spinarray(spinstruct *spinstruct_arr) (H)
     - sets spinstructs for given array and ordering -> wrapper function for 8. & 13.
 *******************************************************************************/
 #include <stdio.h>
@@ -215,7 +223,7 @@ double coord_distance(spinstruct *spnstrct1, spinstruct *spnstrct2) {
 Next neighbor part (for both orderings)
 *******************************************************************************/
 
-static int n_of_x_lexo(int *x) {
+static inline int n_of_x_lexo(int *x) {
   /* x is coordinate vector and n is index in lexo ordering  */
   int sum;
   for (mu=0; muy<D; mu++) { sum = (x[mu]*pow(N, mu))/lattice_spacing; }
@@ -238,7 +246,7 @@ static int n_of_x(int *x) {
   }
 }
 
-void set_nnarray(spinstruct *spnstrct) {
+static void set_nnarray(spinstruct *spnstrct) {
   /*
     function that sets the next neighbor indeces into a given spinstruct
     works for lexo and black white ordering and accounts for boundary condition
