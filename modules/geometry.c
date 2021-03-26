@@ -2,6 +2,42 @@
 This module handles the transformation of the real lattice to the discretized
 version used for computing.
 *******************************************************************************/
+
+/*******************************************************************************
+List of functions. (some declared here (S), others declared in header (H))
+1. set_params(argc, argv[]) (H)
+    - sets all nevessary parameters to create geometry
+2. get_N()
+    - returns N
+3. get_D()
+    - returns D
+4. spinstruct_alloc(spinstruct spstrct) (S)
+    - allocates memory for struct arrays coord and nextneighbor_index
+5. spinstruct_free(spinstruct spnstrct) (S)
+    - frees for struct allocated memory
+6. spinarray_free(spinstruct *spnstrct_arr) (H)
+    - frees memory for array of struct (of size N^D) (wrapper of 3.)
+7. coord_distance_dirichlet(spinstruct *spnstrct1, spinstruct *spnstrct2) (S)
+    - calculates distance btw 2 spinindeces for Dirichlet bc
+8. coord_distance_periodic(spinstruct *spnstrct1, spinstruct *spnstrct2) (S)
+    - calculates distance btw 2 spinindeces for periodic bc
+9. coord_distance(spinstruct *spnstrct1, spinstruct *spnstrct2) (H)
+    - calculates distance btw 2 spinindeces (wrapper for 5. & 6.)
+10. set_spinarray_blackwhite(spinstruct *spinstruct_arr) (S)
+    - creates structs and assigns values for given array in blackwhite ordering
+11. parity(int *x) (S)
+    - returns parity of coordinate array
+12. np_parity(int np) (S)
+    - returns special parity 2np/n^D
+13. set_coord_blackwhite(int np, int *x) (S)
+    - sets the coordinates in coordinate vector for given index for blackwhite ordering
+14. void set_spinarray_lexo(spinstruct *spinstruct_arr) (S)
+    - creates structs and assigns values for given array in lexographic ordering
+15. set_coord_lexo(int n, int *x) (S)
+    - sets the coordinates in coordinate vector for given index for lexographic ordering
+16. set_spinarray(spinstruct *spinstruct_arr) (H)
+    - sets spinstructs for given array and ordering -> wrapper function for 8. & 13.
+*******************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -9,46 +45,31 @@ version used for computing.
 #include "spin.h"
 
 static int D=1; // D = Dimension
-static int N=1; // N = Number of lattice sites in one direction (per dimension)
+static int N=0; // N = Number of lattice sites in one direction (per dimension)
 static int lattice_spacing=1; // lattice spacing fixed to 1 in this project!
 static int boundary_condition;
 static int *bc_ptr=NULL;
 static int ordering=1; // 0 for lexo and 1 for black white
 int nosite = -1; // should be unchangeable but open for other modules
 
-/*******************************************************************************
-List of functions. (some declared here (S), others declared in header (H))
-1. set_params(argc, argv[]) (H)
-    - sets all nevessary parameters to create geometry
-2. spinstruct_alloc(spinstruct spstrct) (S)
-    - allocates memory for struct arrays coord and nextneighbor_index
-3. spinstruct_free(spinstruct spnstrct) (S)
-    - frees for struct allocated memory
-4. spinarray_free(spinstruct *spnstrct_arr) (H)
-    - frees memory for array of struct (of size N^D) (wrapper of 3.)
-5. coord_distance_dirichlet(spinstruct *spnstrct1, spinstruct *spnstrct2) (S)
-    - calculates distance btw 2 spinindeces for Dirichlet bc
-6. coord_distance_periodic(spinstruct *spnstrct1, spinstruct *spnstrct2) (S)
-    - calculates distance btw 2 spinindeces for periodic bc
-7. coord_distance(spinstruct *spnstrct1, spinstruct *spnstrct2) (H)
-    - calculates distance btw 2 spinindeces (wrapper for 5. & 6.)
-8. set_spinarray_blackwhite(spinstruct *spinstruct_arr) (S)
-    - creates structs and assigns values for given array in blackwhite ordering
-9. parity(int *x) (S)
-    - returns parity of coordinate array
-10. np_parity(int np) (S)
-    - returns special parity 2np/n^D
-11. set_coord_blackwhite(int np, int *x) (S)
-    - sets the coordinates in coordinate vector for given index for blackwhite ordering
-12. void set_spinarray_lexo(spinstruct *spinstruct_arr) (S)
-    - creates structs and assigns values for given array in lexographic ordering
-13. set_coord_lexo(int n, int *x)
-    - sets the coordinates in coordinate vector for given index for lexographic ordering
-14. set_spinarray(spinstruct *spinstruct_arr) (H)
-    - sets spinstructs for given array and ordering -> wrapper function for 8. & 13.
-*******************************************************************************/
-/* set_params(argc, argv[]) - sets all nevessary parameters to create geometry */
+/* static function initialition inside module as not needed outside */
+static void spinstruct_alloc(spinstruct spstrct);
+static inline void spinstruct_free(spinstruct spnstrct);
+static inline double coord_distance_dirichlet(spinstruct *spnstrct1, spinstruct *spnstrct2);
+static inline double coord_distance_periodic(spinstruct *spnstrct1, spinstruct *spnstrct2);
+static int n_of_x_lexo(int *x);
+static inline int n_of_x_blackwhite(int *x);
+static int n_of_x(int *x);
+static void set_spinarray_blackwhite(spinstruct *spinstruct_arr);
+static inline int parity(int *x);
+static inline int np_parity(int np);
+static void set_coord_blackwhite(int np, int *x);
+static void set_spinarray_lexo(spinstruct *spinstruct_arr);
+static inline void set_coord_lexo(int n, int *x);
 
+/*******************************************************************************
+Parameter handling
+*******************************************************************************/
 void set_params(int argc, char const *argv[]) {
   // if argc not some value -> error message and exit
   if (N%2 != 0) {
@@ -68,6 +89,33 @@ void set_params(int argc, char const *argv[]) {
   if ()
   boundary_condition = atoi(argv[3]);
   bc_ptr = &boundary_condition;
+  ordering = atoi(argv[4]);
+}
+
+int get_N() {
+    static int sN=0;
+    if(N==0) { printf("[ geometry.c| get_N ] Error! N not yet set!\n"); exit(-1); }
+    if(sN==0) { sN=N; }
+    else {
+      if((N!=sN))  {
+         printf("[ geometry.c| get_N ] Error! (N) has changed: (%d) -> (%d)\n",sN,N);
+         exit(-1);
+      }
+    }
+    return N;
+}
+
+int get_D() {
+    static int sD=0;
+    if(D==0) { printf("[ geometry.c| get_D() ] Error! D not yet set!\n"); exit(-1); }
+    if(sD==0) { sN=D; }
+    else {
+      if((N!=sD))  {
+         printf("[ geometry.c| get_N ] Error! (N) has changed: (%d) -> (%d)\n",sD,D);
+         exit(-1);
+      }
+    }
+    return D;
 }
 
 
@@ -317,7 +365,7 @@ static void set_spinarray_lexo(spinstruct *spinstruct_arr) {
   }
 }
 
-inline void set_coord_lexo(int n, int *x) {
+static inline void set_coord_lexo(int n, int *x) {
   /* n = current index, x = coordinate vector */
   for (int mu=0; mu<D; mu++) {
     x[mu] = (n/pow(N,mu))%N;
