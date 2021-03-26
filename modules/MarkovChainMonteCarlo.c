@@ -1,4 +1,7 @@
 /***************************************************+***************************
+Method:
+we use the 1. proposed updating method (refering to desrciption) -> MARS step for each spin value proposal
+for one iteration: We update first all even then all odd 
 Structure:
 1. loop over all even spins:
     - update all even spins
