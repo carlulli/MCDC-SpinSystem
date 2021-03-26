@@ -80,6 +80,8 @@ Parameter handling
 *******************************************************************************/
 void set_params(int argc, char const *argv[]) {
   // if argc not some value -> error message and exit
+  N = atoi(argv[1]);
+  D = atoi(argv[2]);
   if (N%2 != 0) {
     printf("[geomerty.c | set_params()] ARRR. Number of lattice points in one direction needs to be EVEN!\n");
     exit(-1);
@@ -92,9 +94,6 @@ void set_params(int argc, char const *argv[]) {
     printf("[geometry.c | set_params()] Boundary Condition out of bounds. Should be 0 for Dirichlet and 1 for periodic. \n");
     exit(-1);
   }
-  N = atoi(argv[1]);
-  D = atoi(argv[2]);
-  if ()
   boundary_condition = atoi(argv[3]);
   bc_ptr = &boundary_condition;
   ordering = atoi(argv[4]);
@@ -367,7 +366,7 @@ static void set_spinarray_lexo(spinstruct *spinstruct_arr) {
   for (int i=0; i<pow(N, D), i++){
     spinstruct_alloc(spinstruct_arr[i]);
     spinstruct_arr[i].idx = i;
-    spinstruct_arr[i].spinval = function_that_assigns_spinvalue();
+    // spinstruct_arr[i].spinval = function_that_assigns_spinvalue();
     set_coord_lexo(i, spinstruct_arr[i].coord);
     set_nnarray_lexo(spinstruct_arr[i]);
   }
