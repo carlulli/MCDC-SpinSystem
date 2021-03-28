@@ -24,16 +24,31 @@ int main(int argc, char const *argv[]) {
   arrsize=get_arraysize();
   dim=get_D();
 
-  // printf("DEBUGG PRINT TYPE error trick %s\n", spinstruct_arr[0].idx);
-  // int index=0;
-  // index = spinstruct_arr[0].idx;
+  // printf("DEBUGG PRINT TYPE error trick %s\n", spinstruct_arr[0]->coord);
   // printf("DEBUGGING\n");
   // exit(-1);
+  // int index=0;
+  // index = spinstruct_arr[0].idx;
+
 
   printf(
     "Your chosen system: \n Size in one direction = %d\t Dimension = %d \t boundary_condition = %s \t ordering = %s \n",
     get_N(), dim, argv[3], argv[4]
   );
+  printf("LOOPING THROUGH INDECES.\n");
+  printf("Spin index\t| Coordinates\n");
+  printf("--------------------------------\n");
+  for (int i=0; i<arrsize; i++) {
+      printf("%d\t|\t(%d, %d)\n", spinstruct_arr[i].idx, spinstruct_arr[i].coord[0], spinstruct_arr[i].coord[1]);
+  }
+  spinarray_free(spinstruct_arr);
+  spinstruct_arr = set_spinarray_coord2d();
+
+  printf(
+    "Your chosen system: \n Size in one direction = %d\t Dimension = %d \t boundary_condition = %s \t ordering = %s \n",
+    get_N(), dim, argv[3], argv[4]
+  );
+  printf("LOOPING THROUGH COORDINATES.\n");
   printf("Spin index\t| Coordinates\n");
   printf("--------------------------------\n");
   for (int i=0; i<arrsize; i++) {

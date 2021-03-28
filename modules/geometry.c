@@ -38,16 +38,18 @@ List of functions. (some declared here (S), others declared in header (H))
     - sets a next neighbor index array for given struct
 16. static void set_coord_blackwhite(int np, int *x) (S)
     - sets the coordinates in coordinate vector for given index for blackwhite ordering
-17. static void set_spinarray_blackwhite(spinstruct_t *spinstruct_arr) (S)
+17. static spinstruct_t* set_spinarray_blackwhite(spinstruct_t *spinstruct_arr) (S)
     - creates structs and assigns values for given array in blackwhite ordering
 18. static inline void set_coord_lexo(int n, int *x) (S)
     - sets the coordinates in coordinate vector for given index for lexographic ordering
-19. static void void set_spinarray_lexo(spinstruct_t *spinstruct_arr) (S)
+19. static spinstruct_t* set_spinarray_lexo(spinstruct_t *spinstruct_arr) (S)
     - creates structs and assigns values for given array in lexographic ordering
-20. void set_spinarray(spinstruct_t *spinstruct_arr) (H)
+20. spinstruct_t* set_spinarray(spinstruct_t *spinstruct_arr) (H)
     - sets spinstructs for given array and ordering -> wrapper function for 8. & 13.
 21. int get_arraysize() (H)
     - returns size of allocated systems total spin array
+22. spinstruct_t* set_spinarray_coord2d(void) (H)
+    - function to allocate and assign an spinstruct array looping coordinates BUT ONLY 2D
 *******************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
@@ -92,8 +94,8 @@ static void set_coord_blackwhite(int np, int *x);
 // static void set_spinarray_blackwhite(void);
 static spinstruct_t* set_spinarray_blackwhite(void);
 // static void set_spinarray_lexo(spinstruct_t *spinstruct_arr);
-static inline void set_coord_lexo(int n, int *x);
-static void set_spinarray_lexo(void);
+static void set_coord_lexo(int n, int *x);
+static spinstruct_t* set_spinarray_lexo(void);
 
 /*******************************************************************************
 Parameter handling
@@ -161,7 +163,7 @@ static void spinstruct_alloc(spinstruct_t *spnstrct) {
     spnstrct->nnidx = (int *) malloc(sizeof(int)*2*D);
   }
   else {
-    printf("[geomtry.c | spinstruct_alloc()] ERROR: apparently struct values are already allocated. \n");
+    printf("[geometry.c | spinstruct_alloc()] ERROR: apparently struct values are already allocated. \n");
     exit(-1);
   }
 }
@@ -170,10 +172,18 @@ static inline void spinstruct_free(spinstruct_t *spnstrct) {
   /* function to deallocate (free) memory used for spinstruct spnstrct */
   free(spnstrct->coord);
   free(spnstrct->nnidx);
+  spnstrct->coord = NULL;
+  spnstrct->nnidx = NULL;
 }
 
 void spinarray_free(spinstruct_t *spnstrct_arr) {
-  for (int i=0; i<int_pow(N,D); i++) { spinstruct_free(&spnstrct_arr[i]); }
+  for (int i=0; i<int_pow(N,D); i++) {
+    spinstruct_free(&spnstrct_arr[i]);
+    if (spnstrct_arr[i].coord == NULL) { printf("[geometry.c | spinarray_free()] Succesfully set input spinstruct* spinstruct_array[%d]->coord = NULL\n", i);}
+  }
+  free(spnstrct_arr);
+  spnstrct_arr = NULL;
+  // printf("[geometry.c | spinarray_free()] INFO value spinstruct_arr[%d] = \n", );
 }
 
 /*******************************************************************************
@@ -310,47 +320,16 @@ static void set_coord_blackwhite(int np, int *x) {
   for (int mu=0; mu<D; mu++) {
     xprime[mu] = (( 2*np-(2*np/int_pow(N,D))*int_pow(N,D))/int_pow(N,mu) )%N;
   }
+  printf("[geometry.c | set_coord_blackwhite()] xprime[%d]=(%d, %d)\n", np, xprime[0], xprime[1]);
+  printf("[geometry.c | set_coord_blackwhite()] np_parity[%d]=%d\n", np, np_parity(np));
+  printf("[geometry.c | set_coord_blackwhite()] parity[%d]=%d\n", np, parity(xprime));
   for (int xi=0; xi<D; xi++) {
     if (xi==0) { x[xi] = ( xprime[xi]+(np_parity(np)+parity(xprime))%2 )%N; }
-    else { x[xi] = ( xprime[xi]+(np_parity(np)+parity(xprime))%2 * (xprime[xi-1]==0) )%N; }
+    else { x[xi] = ( xprime[xi]+(np_parity(np)+parity(xprime))%2 * (xprime[xi-1]==0) )%N;
+      printf("[geometry.c | set_coord_blackwhite()] x[%d]=%d\n", np, x[xi]);
+    }
   }
 }
-
-// // void set_spinarray_blackwhite(spinstruct_t *spinstruct_arr) {
-// static void set_spinarray_blackwhite(void) {
-//   // GOAL: assigns elements (spin values) to an array in a way that it contains all spin values for the whole lattice
-//   //        this array can be called with the correct index and returns the element at this index
-//   //          that is: the spin value of spin at this lattice site where index points to
-//   // (assigns spin values to)? an array with all even lattice points first (black)
-//   //  and all white lattice points second (white)
-//   // above is the coordinate ordering, ie. first half indeces are even lattice points (black)
-//   // second half are odd indeces (white) (even and odd refer to the parity of coordinate tuple)
-//   // array is N^d long
-//   // array elements are structs with spinvalue, own index, own coordinate and next neighbor indeces
-//   // -> function needs acces to spin module
-//   // an array has to exist where the needed and elements can be taken by using the index -> STRUCT idea?
-//   /*
-//   1. set_params to get N and d
-//   2. allocate arrray of structs with size N^d
-//   3. loop through array and assign each point:
-//     -  the corresponding coord.
-//     -  a spin value
-//     - its index
-//     - next neighbor indeces (maybe by calling the corresponding function)
-//   */
-//   // spinstruct *spinstruct_arr
-//   // spinstruct_t this = spinstruct_arr = (spinstruct_t*) malloc(sizeof(spinstruct_t)*int_pow(N, D));
-//   spinstruct_t *spinstruct_arr = (spinstruct_t*) malloc(sizeof(spinstruct_t)*int_pow(N, D));
-//
-//   for (int i=0; i<int_pow(N, D); i++){
-//     spinstruct_alloc(&spinstruct_arr[i]);
-//     spinstruct_arr[i].idx = i;
-//     // spinstruct_arr[i].spinval = function_that_assigns_spinvalue(); maybe do this when initalizing the hot/cold start
-//     set_coord_blackwhite(i, spinstruct_arr[i].coord);
-//     set_nnarray(&spinstruct_arr[i]);
-//     printf("[geometry.c | set_spinarray_blackwhite()] DEBUGGING spinstruct_arr[%d].idx = %d\n", i, spinstruct_arr[i].idx);
-//   }
-// }
 
 static spinstruct_t* set_spinarray_blackwhite(void) {
   // with constructor
@@ -364,7 +343,6 @@ static spinstruct_t* set_spinarray_blackwhite(void) {
     - next neighbor indeces (maybe by calling the corresponding function)
   4. return temporary array
   */
-  // spinstruct_t this = spinstruct_arr = (spinstruct_t*) malloc(sizeof(spinstruct_t)*int_pow(N, D));
   spinstruct_t *this = (spinstruct_t*) malloc(sizeof(spinstruct_t)*int_pow(N, D));
 
   for (int i=0; i<int_pow(N, D); i++){
@@ -381,7 +359,7 @@ static spinstruct_t* set_spinarray_blackwhite(void) {
 /*******************************************************************************
 LEXOGRAPHIC ORDERING
 *******************************************************************************/
-static inline void set_coord_lexo(int n, int *x) {
+static void set_coord_lexo(int n, int *x) {
   /* n = current index, x = coordinate vector */
   for (int mu=0; mu<D; mu++) {
     x[mu] = (n/int_pow(N,mu))%N;
@@ -389,7 +367,7 @@ static inline void set_coord_lexo(int n, int *x) {
 }
 
 // static void set_spinarray_lexo(spinstruct_t *spinstruct_arr) {
-static void set_spinarray_lexo(void) {
+static spinstruct_t* set_spinarray_lexo(void) {
   // GOAL: assigns elements (spin values) to an array in a way that it contains all spin values for the whole lattice
   //        this array can be called with the correct index and returns the element at this index
   //          that is: the spin value of spin at this lattice site where index points to
@@ -405,31 +383,27 @@ static void set_spinarray_lexo(void) {
     - its index
     - next neighbor indeces (maybe by calling the corresponding function)
   */
-  spinstruct_t *spinstruct_arr = (spinstruct_t*) malloc(sizeof(spinstruct_t)*int_pow(N, D));
+  spinstruct_t *this = (spinstruct_t*) malloc(sizeof(spinstruct_t)*int_pow(N, D));
 
   for (int i=0; i<int_pow(N, D); i++){
-    spinstruct_alloc(&spinstruct_arr[i]);
-    spinstruct_arr[i].idx = i;
+    spinstruct_alloc(&this[i]);
+    this[i].idx = i;
     // spinstruct_arr[i].spinval = function_that_assigns_spinvalue();
-    set_coord_lexo(i, spinstruct_arr[i].coord);
-    set_nnarray(&spinstruct_arr[i]);
+    set_coord_lexo(i, this[i].coord);
+    set_nnarray(&this[i]);
   }
+  return this;
 }
 
 
 /*******************************************************************************
 Other public functions
 *******************************************************************************/
-// void set_spinarray(spinstruct_t *spinstruct_arr) {
-// void set_spinarray(void) {
 spinstruct_t* set_spinarray(void) {
   spinstruct_t *spnstrctarr_ptr=NULL;
   if (bc_ptr==NULL) { printf("[geometry.c | set_spinarray()] ERROR! Params not set!\n"); exit(-1); }
-  // if (boundary_condition==0) { set_spinarray_lexo(spinstruct_arr); }
-  // else if (boundary_condition==1) { set_spinarray_blackwhite(spinstruct_arr); }
-  // if (boundary_condition==0) { set_spinarray_lexo(); }
-  // else if (boundary_condition==1) { set_spinarray_blackwhite(); }
-  if (boundary_condition==0) { set_spinarray_lexo(); }
+
+  if (boundary_condition==0) { spnstrctarr_ptr = set_spinarray_lexo(); }
   else if (boundary_condition==1) { spnstrctarr_ptr = set_spinarray_blackwhite(); }
 
   else {
@@ -441,4 +415,34 @@ spinstruct_t* set_spinarray(void) {
 
 int get_arraysize() {
   return int_pow(N,D);
+}
+
+spinstruct_t* set_spinarray_coord2d(void) {
+  int Dim = 2, index=0;
+  if (D!=Dim) {
+    printf("[geometry.c | set_spinarray_coord2d()] ERROR. No 2D system used!\n");
+    exit(-1);
+  }
+
+  spinstruct_t *temp = (spinstruct_t*) malloc(sizeof(spinstruct_t)*int_pow(N, D));
+  int *temp_coord = (int*) malloc(sizeof(int)*Dim);
+  for (int k=0; k<Dim; k++) { temp_coord[k] = 0; }
+
+  for (int j=0; j<N; j++) {
+    temp_coord[1] = j;
+    for (int i=0; i<N; i++){
+      temp_coord[0] = i;
+      index = n_of_x(temp_coord);
+      spinstruct_alloc(&temp[index]);
+      temp[index].idx = index;
+      for (int mu=0; mu<Dim; mu++) { temp[index].coord[mu] = temp_coord[mu]; }
+      // spinstruct_arr[i].spinval = function_that_assigns_spinvalue(); maybe do this when initalizing the hot/cold start
+      set_nnarray(&temp[index]);
+    }
+  }
+  free(temp_coord);
+  temp_coord = NULL;
+  printf("[geometry.c | set_spinarray_coord2d()] Finished. \n");
+
+  return temp;
 }

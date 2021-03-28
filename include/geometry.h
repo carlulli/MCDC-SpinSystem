@@ -35,5 +35,7 @@ spinstruct_t* set_spinarray(void);
 /* sets spinstructs for given array and ordering -> wrapper function for 8. & 13. */
 int get_arraysize();
 /* return size of allocated systems total spin array */
+spinstruct_t* set_spinarray_coord2d(void);
+/* functin sets whole spinstruct array looping through coordinates but only for 2D */
 
 #endif /* GEOMETRY_H */
