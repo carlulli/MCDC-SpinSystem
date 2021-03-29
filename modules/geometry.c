@@ -179,7 +179,7 @@ static inline void spinstruct_free(spinstruct_t *spnstrct) {
 void spinarray_free(spinstruct_t *spnstrct_arr) {
   for (int i=0; i<int_pow(N,D); i++) {
     spinstruct_free(&spnstrct_arr[i]);
-    if (spnstrct_arr[i].coord == NULL) { printf("[geometry.c | spinarray_free()] Succesfully set input spinstruct* spinstruct_array[%d]->coord = NULL\n", i);}
+    // if (spnstrct_arr[i].coord == NULL) { printf("[geometry.c | spinarray_free()] Succesfully set input spinstruct* spinstruct_array[%d]->coord = NULL\n", i);}
   }
   free(spnstrct_arr);
   spnstrct_arr = NULL;
@@ -320,14 +320,17 @@ static void set_coord_blackwhite(int np, int *x) {
   for (int mu=0; mu<D; mu++) {
     xprime[mu] = (( 2*np-(2*np/int_pow(N,D))*int_pow(N,D))/int_pow(N,mu) )%N;
   }
-  printf("[geometry.c | set_coord_blackwhite()] xprime[%d]=(%d, %d)\n", np, xprime[0], xprime[1]);
-  printf("[geometry.c | set_coord_blackwhite()] np_parity[%d]=%d\n", np, np_parity(np));
-  printf("[geometry.c | set_coord_blackwhite()] parity[%d]=%d\n", np, parity(xprime));
+  // printf("[geometry.c | set_coord_blackwhite()] xprime[%d]=(%d, %d)\n", np, xprime[0], xprime[1]);
+  // printf("[geometry.c | set_coord_blackwhite()] np_parity[%d]=%d\n", np, np_parity(np));
+  // printf("[geometry.c | set_coord_blackwhite()] parity[%d]=%d\n", np, parity(xprime));
   for (int xi=0; xi<D; xi++) {
     if (xi==0) { x[xi] = ( xprime[xi]+(np_parity(np)+parity(xprime))%2 )%N; }
-    else { x[xi] = ( xprime[xi]+(np_parity(np)+parity(xprime))%2 * (xprime[xi-1]==0) )%N;
-      printf("[geometry.c | set_coord_blackwhite()] x[%d]=%d\n", np, x[xi]);
+    else {
+      // x[xi] = ( xprime[xi]+(np_parity(np)+parity(xprime))%2 * (x[0]==0?xprime[xi]+1:xprime[xi]))%N;
+      x[xi] = (1-parity(xprime))*( (1-np_parity(np))*xprime[xi] + np_parity(np)*(x[xi-1]==0?xprime[xi]+1:xprime[xi]) )
+              + (parity(xprime))*( (np_parity(np))*xprime[xi] + (1-np_parity(np))*(x[xi-1]==0?xprime[xi]+1:xprime[xi]) );
     }
+    // printf("[geometry.c | set_coord_blackwhite()] x[%d]=%d\n", np, x[xi]);
   }
 }
 

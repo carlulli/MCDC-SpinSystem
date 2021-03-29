@@ -29,7 +29,8 @@ int main(int argc, char const *argv[]) {
   // exit(-1);
   // int index=0;
   // index = spinstruct_arr[0].idx;
-
+  int val = (1==1);
+  printf("(1==1)=%d\n", val);
 
   printf(
     "Your chosen system: \n Size in one direction = %d\t Dimension = %d \t boundary_condition = %s \t ordering = %s \n",
@@ -41,19 +42,19 @@ int main(int argc, char const *argv[]) {
   for (int i=0; i<arrsize; i++) {
       printf("%d\t|\t(%d, %d)\n", spinstruct_arr[i].idx, spinstruct_arr[i].coord[0], spinstruct_arr[i].coord[1]);
   }
-  spinarray_free(spinstruct_arr);
-  spinstruct_arr = set_spinarray_coord2d();
-
-  printf(
-    "Your chosen system: \n Size in one direction = %d\t Dimension = %d \t boundary_condition = %s \t ordering = %s \n",
-    get_N(), dim, argv[3], argv[4]
-  );
-  printf("LOOPING THROUGH COORDINATES.\n");
-  printf("Spin index\t| Coordinates\n");
-  printf("--------------------------------\n");
-  for (int i=0; i<arrsize; i++) {
-      printf("%d\t|\t(%d, %d)\n", spinstruct_arr[i].idx, spinstruct_arr[i].coord[0], spinstruct_arr[i].coord[1]);
-  }
+  // spinarray_free(spinstruct_arr);
+  // spinstruct_arr = set_spinarray_coord2d();
+  //
+  // printf(
+  //   "Your chosen system: \n Size in one direction = %d\t Dimension = %d \t boundary_condition = %s \t ordering = %s \n",
+  //   get_N(), dim, argv[3], argv[4]
+  // );
+  // printf("LOOPING THROUGH COORDINATES.\n");
+  // printf("Spin index\t| Coordinates\n");
+  // printf("--------------------------------\n");
+  // for (int i=0; i<arrsize; i++) {
+  //     printf("%d\t|\t(%d, %d)\n", spinstruct_arr[i].idx, spinstruct_arr[i].coord[0], spinstruct_arr[i].coord[1]);
+  // }
 
   spinarray_free(spinstruct_arr);
   return 0;
