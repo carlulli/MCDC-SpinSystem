@@ -25,6 +25,10 @@ int get_N();
 /* returns N */
 int get_D();
 /* returns D */
+int get_ordering();
+/* returns ordering value (so far without safety function) */
+int get_boundary_condition();
+/* returns boundary condition value (so far without safety function) */
 void spinarray_free(spinstruct_t *spnstrct_arr);
 /* frees memory for array of struct (of size N^D) (wrapper of 3.) */
 double coord_distance(spinstruct_t *spnstrct1, spinstruct_t *spnstrct2);
