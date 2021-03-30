@@ -19,7 +19,7 @@ This module should contain:
 
 
 
-void aligned_start(spinstruct *spinstruct_arr, int direction)
+void aligned_start_dir( int direction)
 {
   /* Function: It gives every spin the orientation specified by direction. Works for both the Ising, and the Clock model.
 		 					 The direction can be defined in the parameter module.
@@ -33,9 +33,29 @@ void aligned_start(spinstruct *spinstruct_arr, int direction)
 
 }
 
+void cold_start()  // in the cold start all spins point the same way.
+{
+	if (spinmodule == 0) //Ising
+	{
+		for(x=0, x< pow(N, D), x++)
+	  {
+	    spinstruct_arr[x].spinval = 1;
+	  }
+	}
+
+	if (spinmodule == 1) //Clock
+	{
+		for(x=0, x< pow(N, D), x++)
+	  {
+	    spinstruct_arr[x].spinval = 0;
+	  }
+	}
+
+}
 
 
-void anti_aligned_start_black_white(spinstruct *spinstruct_arr, int direction)
+
+void anti_aligned_start_black_white( int direction)
 {
 	/* Function: Gives each spin the opposite direction than its neighboring spins.
 	 						 In the black and white ordering the first half of the spins (all white) are  not in contact with each other,
@@ -57,9 +77,11 @@ void anti_aligned_start_black_white(spinstruct *spinstruct_arr, int direction)
 
 
 
-void random_spinset (spinstruct *spinstruct_arr)
+
+
+void hot_start()
 {
-	/* Function: 	Gives each spin a random value.
+	/* Function: 	Gives each spin a random value, making it maximally unordered, therefore called hot.
 		 Input: 		spinstruct array
 	*/
   int placeholder;
@@ -98,7 +120,7 @@ int spinmultiplication(int spin1, int spin2)
   else if (spinmodule == 1){ // Clock
     spinproduct = (spin1 - spin2 + M_number_orient) % M_number_orient ;
   }
-
+	return spinproduct;
 }
 
 
