@@ -68,7 +68,7 @@ static int boundary_condition;
 static int *bc_ptr=NULL;
 static int ordering=1; // 0 for lexo and 1 for black white
 int nosite = -1; // should be unchangeable but open for other modules
-static int spinmodel ; //!
+
 
 
 /* static function initialition inside module as not needed outside */
@@ -80,7 +80,6 @@ static inline int parity(int *x);
 static inline int np_parity(int np);
 static int n_of_x_lexo(int *x);
 static inline int n_of_x_blackwhite(int *x);
-static int n_of_x(int *x);
 static void set_coord_blackwhite(int np, int *x);
 static spinstruct_t* set_spinarray_blackwhite(void);
 static void set_coord_lexo(int n, int *x);
@@ -264,7 +263,7 @@ static inline int n_of_x_blackwhite(int *x) { // also inline?
   return np;
 }
 
-static int n_of_x(int *x) {
+int n_of_x(int *x) {
   if (ordering==0) { return n_of_x_lexo(x); }
   if (ordering==1) { return n_of_x_blackwhite(x); }
   else {

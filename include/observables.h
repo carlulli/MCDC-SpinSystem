@@ -1,8 +1,8 @@
 #ifndef OBSERVABLES_H
 #define OBSERVABLES_H
 
-double magentization_density();
-double energy_density();
+double magnetization_density(void);
+double energy_density(void);
 
 
 #endif

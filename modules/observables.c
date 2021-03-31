@@ -17,6 +17,7 @@ double magentization_density()
   int N = get_N();
 	int D = get_D();
   double total_magnetization = 0.0;
+	
 
     if (spinmodule == 0){ // Ising !
       for(x=0, x< int_pow(N, D), x++)
