@@ -68,6 +68,7 @@ static int boundary_condition;
 static int *bc_ptr=NULL;
 static int ordering=1; // 0 for lexo and 1 for black white
 int nosite = -1; // should be unchangeable but open for other modules
+static int spinmodel ; //!
 
 
 /* static function initialition inside module as not needed outside */
@@ -111,6 +112,7 @@ void set_params(int argc, char const *argv[]) {
   boundary_condition = atoi(argv[3]);
   bc_ptr = &boundary_condition;
   ordering = atoi(argv[4]);
+	spinmodel = atoi(argv[5]);
 }
 
 int get_N() {

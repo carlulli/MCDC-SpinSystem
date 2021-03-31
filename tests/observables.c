@@ -24,15 +24,6 @@ Procedure: 1. align all spins with function -> void aligned_start(spinstruct *sp
 #include "geometry.h"
 
 
-double magnetization;
-double energy_density;
-double spin_corr_vec[N/2];
-double spinval_values[M_number_orient] ; // !
-double B ;
-int N, D;
-
-
-
 int main(int argc, char const *argv[])
 {
 
@@ -43,8 +34,13 @@ int main(int argc, char const *argv[])
 	int N, D ;
 	N = get_N() ;
 	D = get_D() ;
+	double B = get_B();
 
+	double * spinval_values = set_spinval_values();  // creating the vector which has the real spinvalues for their orientation
+	double * spin_corr_vec = set_spincorrelation_vector();
 
+	double magnetization; // variables to store the magnetization and energy density in.
+	double energy_density;
 
 	/******************************************************************************
 	Test of magnetization density for all spins aligned:
@@ -153,6 +149,10 @@ for(i=0,i<20,i++)
 	energy_density = energy_density();
 	printf(" round:%d has energy_density = %f",i, energy_density);
 }
+
+
+free_spin_corr_vec(); // free up the no longer needed get_arrays
+free_spinval_values();
 
 
 

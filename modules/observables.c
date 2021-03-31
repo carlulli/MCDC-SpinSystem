@@ -9,7 +9,7 @@ magnetization density
 ***************************************************************************/
 double magentization_density()
 {
-  // get size
+  //N = get_N();
   double total_magnetization = 0.0;
 
     if (spinmodule == 0){ // Ising !
@@ -45,12 +45,13 @@ double magentization_density()
 double energy_density()
 {
   // !still need!-> functions to get the size, the magnetic field and the dimension of the problem
-N = get_N();
-D = get_D();
-B = get_B(); // ! does this function actually exist?
+// N = get_N();
+// D = get_D();
+// B = get_B(); // ! does this function actually exist?
   double total_energy = 0.0;
   double sum_next_neighbour_interaction = 0.0;
   int contrib_neighbor_index = 0;
+	int prod_neighbor_orientation ;
   double real_part_for_m_orientation = 0.0 ;
   // loop over all the spins -> for each spin position the contribution of all the neighbours gets calculated
 
@@ -94,9 +95,3 @@ B = get_B(); // ! does this function actually exist?
 
 
 }
-
-
-
-
-
-// two point spin correlation functions
