@@ -23,6 +23,7 @@ void free_spin_corr_vec();
  /* freeing up the spin correlation vector */
 void free_spinval_values();
 /*frees spinval values*/
+int random_spin_orientation() ;
 
 
 // void anti_aligned_start_black_white( int direction);    might not be needed

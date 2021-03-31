@@ -104,9 +104,9 @@ void hot_start()
 
 }
 
-int random_spin_orientation()
+int random_spin_orientation()  // returns an integer which is a randomly selected possible orientation of the spin.
 {
-	
+
 	if (spinmodel == 0) //Ising
 	{
 		random_spin_orientation = rand() % 2  ;
@@ -116,7 +116,7 @@ int random_spin_orientation()
 	{
 		random_spin_orientation = rand() % M_number_orient;
 	}
-
+	return random_spin_orientation;
 }
 
 
@@ -203,7 +203,7 @@ double spin_spin_correlation_r(int r)
 
 			index_product = spinmultiplication(orient_spin1,orient_spin2); // index of the spinproduct for each summand
 			// ! and here the spinvalue corresponding to that
-			correlation_sum += spinval_values[index_product]
+			correlation_sum += spinval_values[index_product];
 		}
 	}
 
@@ -231,7 +231,7 @@ double spin_spin_correlation_r(int r)
 
 					index_product = spinmultiplication(orient_spin1,orient_spin2); // index of the spinproduct for each summand
 					// ! and here the spinvalue corresponding to that
-					correlation_sum += spinval_values[index_product]
+					correlation_sum += spinval_values[index_product];
 				}
 			}
 		}
@@ -267,7 +267,7 @@ double spin_spin_correlation_r(int r)
 
 							index_product = spinmultiplication(orient_spin1,orient_spin2); // index of the spinproduct for each summand
 							// ! and here the spinvalue corresponding to that
-							correlation_sum += spinval_values[index_product]
+							correlation_sum += spinval_values[index_product];
 
 
 						}
