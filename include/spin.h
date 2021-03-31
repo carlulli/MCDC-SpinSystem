@@ -3,8 +3,14 @@
 
 extern double *spinval_values ;
 extern double *spin_corr_vec ;
+extern int spinmodel;
 
-
+void set_physics_params();
+/* function that sets B, spinmodel, M_number_orient, seed */
+int get_M_number_orient(void);
+int get_seed(void);
+double get_B(void);
+/* function retur said values */ 
 void aligned_start_dir( int direction);
 /*  gives every spin the orientation specified by direction */
 void cold_start();
@@ -22,7 +28,7 @@ void set_spincorrelation_vector() ;  // !
 void free_spin_corr_vec();
  /* freeing up the spin correlation vector */
 void free_spinval_values();
-/*frees spinval values*/
+/* frees spinval values */
 int random_spin_orientation() ;
 
 
@@ -34,4 +40,4 @@ int random_spin_orientation() ;
 
 
 
-#endif
+#endif /* SPIN_H */

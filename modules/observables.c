@@ -3,9 +3,9 @@
 #include "geometry.h"
 #include <math.h>
 // initialize the static variables
-static int N;
-static int D;
-static int B;
+// static int N;
+// static int D;
+// static int B;
 
 /*************************************************************************
 magnetization density
@@ -13,8 +13,8 @@ magnetization density
 ***************************************************************************/
 double magentization_density()
 {
-  N = get_N();
-	D = get_D();
+  int N = get_N();
+	int D = get_D();
   double total_magnetization = 0.0;
 
     if (spinmodule == 0){ // Ising !
@@ -39,9 +39,9 @@ double magentization_density()
 
 double energy_density()
 {
-	N = get_N();
-	D = get_D();
-	B = get_B();
+	int N = get_N();
+	int D = get_D();
+	int B = get_B();
   double total_energy = 0.0;
   double sum_next_neighbour_interaction = 0.0;
   int contrib_neighbor_index = 0;

@@ -19,29 +19,29 @@ static int M_number_orient;
 static double B ;
 static int seed;
 
-void set_physics()
+void set_physics_params()
 {
 
-	spinmodel = atoi(argv[5]);
+	int spinmodel = atoi(argv[5]); // global variable
 	M_number_orient = atoi(arg[6]);
 	B = atof(arg[7]);
 	seed = atoi(arg[8]);
 
 }
 
-int get_spinmodel{
-	return spinmodel;
-}
+// int get_spinmodel(void) {
+// 	return spinmodel;
+// }
 
-int get_M_number_orient{
+int get_M_number_orient(void) {
 	return M_number_orient;
 }
 
-int get_seed{
+int get_seed(void) {
 	return seed;
 }
 
-double get_B{
+double get_B(void) {
 	return B;
 }
 
