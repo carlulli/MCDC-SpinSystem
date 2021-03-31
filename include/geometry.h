@@ -13,6 +13,7 @@ typedef struct spinstruct { // can also have typedef in front
   */
   int idx;
   double spinval; // maybe just int
+  double ppspinval;
   int *coord;
   int *nnidx; // doesnt need to be 2d as i am using array of structs
 } spinstruct_t; // if typedef at beginning -> use struct_tag here: spinstruct_t
