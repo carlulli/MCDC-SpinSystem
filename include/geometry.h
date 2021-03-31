@@ -9,11 +9,11 @@ At module's beginning, a detailed list of functions is written.
 typedef struct spinstruct { // can also have typedef in front
   /*
   structure that contains all values belonging to one lattive site:
-  own index, spin value at this lattice site, own coordinates (array/list?), nn index array which is only 2D
+  own index, spin value at this lattice site, some proposed spin value, own coordinates (array/list?), nn index array which is only 2D
   */
   int idx;
-  double spinval; // maybe just int
-  double ppspinval;
+  int spinval; // maybe just int
+  int ppspinval; 
   int *coord;
   int *nnidx; // doesnt need to be 2d as i am using array of structs
 } spinstruct_t; // if typedef at beginning -> use struct_tag here: spinstruct_t
