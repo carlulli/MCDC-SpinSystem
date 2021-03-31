@@ -14,7 +14,36 @@ This module should contain:
 #include <stdlib.h>
 #include <math.h>
 
+static int spinmodel ; //!
+static int M_number_orient;
+static double B ;
+static int seed;
 
+void set_physics()
+{
+
+	spinmodel = atoi(argv[5]);
+	M_number_orient = atoi(arg[6]);
+	B = atof(arg[7]);
+	seed = atoi(arg[8]);
+
+}
+
+int get_spinmodel{
+	return spinmodel;
+}
+
+int get_M_number_orient{
+	return M_number_orient;
+}
+
+int get_seed{
+	return seed;
+}
+
+double get_B{
+	return B;
+}
 
 
 
