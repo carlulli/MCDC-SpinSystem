@@ -112,7 +112,6 @@ void set_params(int argc, char const *argv[]) {
   boundary_condition = atoi(argv[3]);
   bc_ptr = &boundary_condition;
   ordering = atoi(argv[4]);
-	spinmodel = atoi(argv[5]);
 }
 
 int get_N() {
@@ -240,6 +239,7 @@ double coord_distance(spinstruct_t *spnstrct1, spinstruct_t *spnstrct2) {
 Next neighbor part (for both orderings)
 *******************************************************************************/
 static inline int parity(int *x) {
+  int sum=0;
   for (int xi=0; xi<D; xi++) {
     sum += x[xi];
   }

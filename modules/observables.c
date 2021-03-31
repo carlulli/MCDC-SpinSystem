@@ -1,6 +1,7 @@
 #include "observables.h"
 #include "utilities.h"
 #include "geometry.h"
+#include "spin.h"
 #include <math.h>
 // initialize the static variables
 // static int N;

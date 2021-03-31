@@ -7,9 +7,9 @@ results for different spin modules but the same configuration
 #include <math.h>
 
 #include "geometry.h"
-#include "hamiltonian.h"
 // #include "MCMC.h"
 #include "spin.h"
+#include "observables.h"
 
 
 int main(int argc, char const *argv[]) {
@@ -46,7 +46,7 @@ int main(int argc, char const *argv[]) {
     energy_dense1,
     spinmodel,
     energy_dense2);
-    
+
     if (energy_dense1==energy_dense2) { printf("GREAT SUCCESS!\n"); }
     else { printf("Consistancy FAILED.\n");  }
 
