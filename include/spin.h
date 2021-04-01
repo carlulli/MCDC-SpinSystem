@@ -4,6 +4,7 @@
 extern double *spinval_values ;
 extern double *spin_corr_vec ;
 
+void set_physics_params (int argc, const char *argv[]);
 void aligned_start_dir( int direction);
 /*  gives every spin the orientation specified by direction */
 void cold_start();
@@ -30,6 +31,9 @@ int get_seed(void) ;
 
 int get_M_number_orient(void);
 
+int get_spinmodel(void);
+
+double get_T(void);
 
 
 // void anti_aligned_start_black_white( int direction);    might not be needed

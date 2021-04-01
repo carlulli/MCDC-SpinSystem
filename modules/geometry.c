@@ -131,8 +131,8 @@ int get_D() {
     if(D==0) { printf("[ geometry.c| get_D() ] Error! D not yet set!\n"); exit(-1); }
     if(sD==0) { sD=D; }
     else {
-      if((N!=sD))  {
-         printf("[ geometry.c| get_N ] Error! (N) has changed: (%d) -> (%d)\n",sD,D);
+      if((D!=sD))  {
+         printf("[ geometry.c| get_N ] Error! (D) has changed: (%d) -> (%d)\n",sD,D);
          exit(-1);
       }
     }
@@ -153,7 +153,7 @@ Spin Struct (is this something for the header?) and spinstruct_arr constructor
 static void spinstruct_alloc(spinstruct_t *spnstrct) {
   //allocate only for arrays?
   // safety feature to not allocate twice (initialzed pointers in struct are NULL )
-  if (spnstrct->coord==NULL | spnstrct->nnidx==NULL) {
+  if ((spnstrct->coord==NULL) | (spnstrct->nnidx==NULL)) {
     spnstrct->coord = (int *) malloc(sizeof(int)*D);
     spnstrct->nnidx = (int *) malloc(sizeof(int)*2*D);
   }
@@ -321,7 +321,7 @@ static void set_coord_blackwhite(int np, int *x) {
   }
 }
 
-static spinstruct_t* set_spinarray_blackwhite(void) {
+static spinstruct_t* q_blackwhite(void) {
   // with constructor
   /*
   1. set_params to get N and d
