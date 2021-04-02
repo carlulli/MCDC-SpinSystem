@@ -25,7 +25,7 @@ static int seed;
 
 double *spinval_values ;
 double *spin_corr_vec ;
-spinstruct_t *spinstruct_arr;
+extern spinstruct_t *spinstruct_arr;
 
 void set_physics_params(int argc,  const char *argv[])
 {

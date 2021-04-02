@@ -1,6 +1,8 @@
 /******************************************************************************
 Test to check if full magnetization can be reached for when temperature is
 close to zero -> accepting only better energy spin flips
+Input values:
+[N] [D] [boundary_condition] [ordering] [spinmodel] [M_number_orient] [B] [seed] [T]
 ********************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,6 +13,8 @@ close to zero -> accepting only better energy spin flips
 #include "spin.h"
 #include "observables.h"
 
+extern spinstruct_t *spinstruct_arr;
+
 int main(int argc, char const *argv[]) {
   /*
   program starts a 4x4 simulation with T=0 and writes out magetization after 100 runs
@@ -19,7 +23,8 @@ int main(int argc, char const *argv[]) {
   */
   set_params(argc, argv);
   set_physics_params(argc, argv);
-  // spinstruct_t *spinstruct_arr = set_spinarry();
+  // extern spinstruct_t *spinstruct_arr = set_spinarray();
+  spinstruct_arr = set_spinarray();
 
   int T, ordering, boundary_condition, spinmodel;
   T = get_T();

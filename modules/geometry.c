@@ -68,6 +68,7 @@ static int boundary_condition;
 static int *bc_ptr=NULL;
 static int ordering=1; // 0 for lexo and 1 for black white
 int nosite = -1; // should be unchangeable but open for other modules
+spinstruct_t *spinstruct_arr;
 
 
 
@@ -153,7 +154,7 @@ Spin Struct (is this something for the header?) and spinstruct_arr constructor
 static void spinstruct_alloc(spinstruct_t *spnstrct) {
   //allocate only for arrays?
   // safety feature to not allocate twice (initialzed pointers in struct are NULL )
-  if ((spnstrct->coord==NULL) | (spnstrct->nnidx==NULL)) {
+  if ((spnstrct->coord==NULL) && (spnstrct->nnidx==NULL)) {
     spnstrct->coord = (int *) malloc(sizeof(int)*D);
     spnstrct->nnidx = (int *) malloc(sizeof(int)*2*D);
   }

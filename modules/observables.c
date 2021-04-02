@@ -8,7 +8,7 @@
 // static int D;
 // static int B;
 double * spinval_values;
-spinstruct_t *spinstruct_arr;
+extern spinstruct_t *spinstruct_arr;
 
 /*************************************************************************
 magnetization density
@@ -52,7 +52,7 @@ double energy_density(void)
 
   int contrib_neighbor_index = 0;
 	int prod_neighbor_orientation ;
-  
+
   // loop over all the spins -> for each spin position the contribution of all the neighbours gets calculated
 
 	if (spinmodel == 0) // Ising
