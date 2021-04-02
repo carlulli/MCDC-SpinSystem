@@ -159,7 +159,7 @@ void hot_start()
 int random_spin_orientation()  // returns an integer which is a randomly selected possible orientation of the spin.
 {
 	int M_number_orient = get_M_number_orient();
-	int random_spin_orientation ;
+	int random_spin_orientation=0;
 	int spinmodel = get_spinmodel();
 	if (spinmodel == 0) //Ising
 	{
@@ -188,7 +188,7 @@ int spinmultiplication(int spin1, int spin2)
 
 	*/
   // for Ising spin1 and spin2 are the actual spin values, whereas for the Clock model they are the m values which determine the spin.
-  int spin_product ;
+  int spin_product=0;
 	int spinmodel = get_spinmodel();
 	int M_number_orient = get_M_number_orient();
 
@@ -243,7 +243,7 @@ double spin_spin_correlation_r(int r)
 	int orient_spin1;
 	int orient_spin2;
   int index_product ;
-	double correlation_sum ;
+	double correlation_sum=0.0;
 	// different sums for the different dimensions
 	// 1 Dimension
 	if (D == 1)
