@@ -321,7 +321,8 @@ static void set_coord_blackwhite(int np, int *x) {
   }
 }
 
-static spinstruct_t* q_blackwhite(void) {
+//static spinstruct_t* q_blackwhite(void) {
+static spinstruct_t* set_spinarray_blackwhite(void) {
   // with constructor
   /*
   1. set_params to get N and d
