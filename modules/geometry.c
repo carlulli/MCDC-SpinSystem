@@ -68,7 +68,7 @@ static int boundary_condition;
 static int *bc_ptr=NULL;
 static int ordering=1; // 0 for lexo and 1 for black white
 int nosite = -1; // should be unchangeable but open for other modules
-static int spinmodel ; //!
+
 
 
 /* static function initialition inside module as not needed outside */
@@ -80,7 +80,6 @@ static inline int parity(int *x);
 static inline int np_parity(int np);
 static int n_of_x_lexo(int *x);
 static inline int n_of_x_blackwhite(int *x);
-static int n_of_x(int *x);
 static void set_coord_blackwhite(int np, int *x);
 static spinstruct_t* set_spinarray_blackwhite(void);
 static void set_coord_lexo(int n, int *x);
@@ -132,8 +131,8 @@ int get_D() {
     if(D==0) { printf("[ geometry.c| get_D() ] Error! D not yet set!\n"); exit(-1); }
     if(sD==0) { sD=D; }
     else {
-      if((N!=sD))  {
-         printf("[ geometry.c| get_N ] Error! (N) has changed: (%d) -> (%d)\n",sD,D);
+      if((D!=sD))  {
+         printf("[ geometry.c| get_N ] Error! (D) has changed: (%d) -> (%d)\n",sD,D);
          exit(-1);
       }
     }
@@ -154,7 +153,7 @@ Spin Struct (is this something for the header?) and spinstruct_arr constructor
 static void spinstruct_alloc(spinstruct_t *spnstrct) {
   //allocate only for arrays?
   // safety feature to not allocate twice (initialzed pointers in struct are NULL )
-  if (spnstrct->coord==NULL | spnstrct->nnidx==NULL) {
+  if ((spnstrct->coord==NULL) | (spnstrct->nnidx==NULL)) {
     spnstrct->coord = (int *) malloc(sizeof(int)*D);
     spnstrct->nnidx = (int *) malloc(sizeof(int)*2*D);
   }
@@ -264,7 +263,7 @@ static inline int n_of_x_blackwhite(int *x) { // also inline?
   return np;
 }
 
-static int n_of_x(int *x) {
+int n_of_x(int *x) {
   if (ordering==0) { return n_of_x_lexo(x); }
   if (ordering==1) { return n_of_x_blackwhite(x); }
   else {
@@ -322,6 +321,7 @@ static void set_coord_blackwhite(int np, int *x) {
   }
 }
 
+//static spinstruct_t* q_blackwhite(void) {
 static spinstruct_t* set_spinarray_blackwhite(void) {
   // with constructor
   /*

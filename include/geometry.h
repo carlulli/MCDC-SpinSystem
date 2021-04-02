@@ -13,7 +13,7 @@ typedef struct spinstruct { // can also have typedef in front
   */
   int idx;
   int spinval; // maybe just int
-  int ppspinval; 
+  int ppspinval;
   int *coord;
   int *nnidx; // doesnt need to be 2d as i am using array of structs
 } spinstruct_t; // if typedef at beginning -> use struct_tag here: spinstruct_t
@@ -40,5 +40,7 @@ spinstruct_t* set_spinarray(void);
 /* sets spinstructs for given array and ordering -> wrapper function for 8. & 13. */
 int get_arraysize();
 /* return size of allocated systems total spin array */
+int n_of_x(int *x);
+
 
 #endif /* GEOMETRY_H */

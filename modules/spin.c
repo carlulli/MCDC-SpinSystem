@@ -16,25 +16,38 @@ This module should contain:
 
 #include "geometry.h"
 #include "spin.h"
+#include "utilities.h"
 
 static int spinmodel ; //!
 static int M_number_orient;
-static double B ;
+static double B , T; // magnetic field and temperature
 static int seed;
 
-void set_physics_params(int argc, char const *argv[])
+double *spinval_values ;
+double *spin_corr_vec ;
+spinstruct_t *spinstruct_arr;
+
+void set_physics_params(int argc,  const char *argv[])
 {
 
-	int spinmodel = atoi(argv[5]); // global variable
+	spinmodel = atoi(argv[5]); // global variable
 	M_number_orient = atoi(argv[6]);
 	B = atof(argv[7]);
 	seed = atoi(argv[8]);
+	T = atof(argv[9]);
 
 }
 
 // int get_spinmodel(void) {
 // 	return spinmodel;
 // }
+int get_spinmodel(void){
+	return spinmodel;
+}
+ double get_T(void){
+	 return T ;
+ }
+
 
 int get_M_number_orient(void) {
 	return M_number_orient;
@@ -58,7 +71,7 @@ void aligned_start_dir( int direction)
 		 Input: array of the spinstructs, direction of spin
   */
 	int N=get_N(), D=get_D();
-  for(int x=0; x< pow(N, D); x++)
+  for(int x=0; x< int_pow(N, D); x++)
   {
     spinstruct_arr[x].spinval = direction;
   }
@@ -69,9 +82,10 @@ void aligned_start_dir( int direction)
 void cold_start()  // in the cold start all spins point the same way.
 {
 	int N=get_N(), D=get_D();
+	int spinmodel = get_spinmodel();
 	if (spinmodel == 0) //Ising
 	{
-		for(int x=0; x< pow(N, D); x++)
+		for(int x=0; x< int_pow(N, D); x++)
 	  {
 	    spinstruct_arr[x].spinval = 1;
 	  }
@@ -79,7 +93,7 @@ void cold_start()  // in the cold start all spins point the same way.
 
 	if (spinmodel == 1) //Clock
 	{
-		for(int x=0; x< pow(N, D); x++)
+		for(int x=0; x< int_pow(N, D); x++)
 	  {
 	    spinstruct_arr[x].spinval = 0;
 	  }
@@ -119,17 +133,20 @@ void hot_start()
 		 Input: 		spinstruct array
 	*/
 	int N=get_N(), D=get_D();
+	int spinmodel = get_spinmodel();
+	int M_number_orient = get_M_number_orient();
   int placeholder;
+
   if (spinmodel == 0) //random spinset for Ising model, with spin -1 or 1.
 	{
-    for(int x=0 ; x<pow(N,D) ; x++ ){
+    for(int x=0 ; x<int_pow(N,D) ; x++ ){
       placeholder = rand() % 2  ;	// randomly generates either a 0 or a 1.
       if (placeholder == 0){placeholder = -1 ;} // the zero than is switched to -1, thereby making it the spinvalue we actually want.
       spinstruct_arr[x].spinval = placeholder ;
     }
   }
   else if (spinmodel == 1){ // random spinset for the Clock model
-    for(int x=0 ; x<pow(N,D) ; x++ ){
+    for(int x=0 ; x<int_pow(N,D) ; x++ ){
       spinstruct_arr[x].spinval =  rand() % M_number_orient;  //  assigning from 0 to M-1 randomly  ... ! the M_number_orient
                                                               // needs to be defined in the parameters file
 
@@ -141,7 +158,9 @@ void hot_start()
 
 int random_spin_orientation()  // returns an integer which is a randomly selected possible orientation of the spin.
 {
-
+	int M_number_orient = get_M_number_orient();
+	int random_spin_orientation ;
+	int spinmodel = get_spinmodel();
 	if (spinmodel == 0) //Ising
 	{
 		random_spin_orientation = rand() % 2  ;
@@ -170,13 +189,16 @@ int spinmultiplication(int spin1, int spin2)
 	*/
   // for Ising spin1 and spin2 are the actual spin values, whereas for the Clock model they are the m values which determine the spin.
   int spin_product ;
+	int spinmodel = get_spinmodel();
+	int M_number_orient = get_M_number_orient();
+
   if (spinmodel == 0){  // Ising
-    spinproduct = spin1 * spin2 ;
+    spin_product = spin1 * spin2 ;
   }
   else if (spinmodel == 1){ // Clock
-    spinproduct = (spin1 - spin2 + M_number_orient) % M_number_orient ;
+    spin_product = (spin1 - spin2 + M_number_orient) % M_number_orient ;
   }
-	return spinproduct;
+	return spin_product;
 }
 
 
@@ -189,6 +211,8 @@ int spinmultiplication(int spin1, int spin2)
 double * set_spinval_values(void)
 { /*	Function: calculates the real values of each spin, that is defined by the direction m.*/
 	double *spinval_values = (double*) malloc(sizeof(double)* M_number_orient) ;
+	int M_number_orient = get_M_number_orient();
+
   for (int i = 0 ; i < M_number_orient; i++){
     spinval_values[i] = cos(2 * M_PI * i / M_number_orient ) ;     //
   }
@@ -211,6 +235,7 @@ double spin_spin_correlation_r(int r)
 		Input: Distance r for which one wants to know the correlation_sum
 		Return: spin-spin correlation for distance r
 	*****************************************************************************/
+	int N=get_N(), D=get_D();
 	int coordvector_spin1[D]; //!
 	int coordvector_spin2[D];
 	int index_spin1 ;
@@ -219,7 +244,6 @@ double spin_spin_correlation_r(int r)
 	int orient_spin2;
   int index_product ;
 	double correlation_sum ;
-	int N=get_N(), D=get_D();
 	// different sums for the different dimensions
 	// 1 Dimension
 	if (D == 1)
@@ -319,7 +343,7 @@ double * set_spincorrelation_vector(void)
 {	/********************************************************************************************************************
 		Function: creates a vector filled with the two-point spin_correlation functions for different r going from 0 to N/2
 	**********************************************************************************************************************/
-N = get_N();	 // length of one dimension
+int N = get_N();	 // length of one dimension
 double *spin_corr_vec = (double*) malloc(sizeof(double)* N/2) ;  // ! check
 /* memory is allocated for the vector spin_corr_vec, which is going to be filled with the spin correlation values for the N/2 different r (distance) values.  */
 	for (int r=0; r<N/2; r++)
