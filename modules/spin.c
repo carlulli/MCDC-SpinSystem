@@ -25,7 +25,7 @@ static int seed;
 
 double *spinval_values ;
 double *spin_corr_vec ;
-spinstruct_t *spinstruct_arr;
+//extern spinstruct_t *spinstruct_arr;
 
 void set_physics_params(int argc,  const char *argv[])
 {
@@ -91,7 +91,7 @@ void cold_start()  // in the cold start all spins point the same way.
 	  }
 	}
 
-	if (spinmodel == 1) //Clock
+	else if (spinmodel == 1) //Clock
 	{
 		for(int x=0; x< int_pow(N, D); x++)
 	  {
@@ -127,7 +127,7 @@ void cold_start()  // in the cold start all spins point the same way.
 
 
 
-void hot_start()
+void hot_start(void)
 {
 	/* Function: 	Gives each spin a random value, making it maximally unordered, therefore called hot.
 		 Input: 		spinstruct array
@@ -243,7 +243,9 @@ double spin_spin_correlation_r(int r)
 	int orient_spin1;
 	int orient_spin2;
   int index_product ;
-	double correlation_sum=0.0;
+
+	double correlation_sum = 0.0 ;
+
 	// different sums for the different dimensions
 	// 1 Dimension
 	if (D == 1)
@@ -263,8 +265,17 @@ double spin_spin_correlation_r(int r)
 
 			index_product = spinmultiplication(orient_spin1,orient_spin2); // index of the spinproduct for each summand
 			// ! and here the spinvalue corresponding to that
-			correlation_sum += spinval_values[index_product];
+			if (spinmodel == 0)
+			{// Ising
+				correlation_sum += index_product ;
+			}
+
+			else if (spinmodel == 1)
+			{
+				correlation_sum += spinval_values[index_product];
+			}
 		}
+		correlation_sum = correlation_sum /N ;
 	}
 
 	// 2 dimensions
@@ -291,14 +302,25 @@ double spin_spin_correlation_r(int r)
 
 					index_product = spinmultiplication(orient_spin1,orient_spin2); // index of the spinproduct for each summand
 					// ! and here the spinvalue corresponding to that
-					correlation_sum += spinval_values[index_product];
+
+					if (spinmodel == 0)
+					{// Ising
+						correlation_sum += index_product ;
+					}
+
+					else if (spinmodel == 1)
+					{ //Clock
+
+						correlation_sum += spinval_values[index_product];
+					}
 				}
 			}
 		}
+		correlation_sum = correlation_sum /(int_pow(N,3)) ;
 	}
 
 	// 3 dimensions
-	else if (D == 2)
+	else if (D == 3)
 	{
 		for(int x1=0; x1< N-1; x1++)    // the huge sum over x1,y1,y2,z1,z2 starts. with regular coordinates over the whole space
 		{
@@ -327,7 +349,15 @@ double spin_spin_correlation_r(int r)
 
 							index_product = spinmultiplication(orient_spin1,orient_spin2); // index of the spinproduct for each summand
 							// ! and here the spinvalue corresponding to that
-							correlation_sum += spinval_values[index_product];
+							if (spinmodel == 0)
+							{// Ising
+								correlation_sum += index_product ;
+							}
+
+							else if (spinmodel == 1)
+							{ // Clock
+								correlation_sum += spinval_values[index_product];
+							}
 
 
 						}
@@ -335,8 +365,9 @@ double spin_spin_correlation_r(int r)
 				}
 			}
 		}
+		correlation_sum = correlation_sum /(int_pow(N,5)) ;
 	}
-	return correlation_sum / int_pow(N,D) ;   // ! here the correlation sum is returned, after being divided by the volume.
+	return correlation_sum ;   // ! here the correlation sum is returned, after being divided by the volume.
 }
 
 double * set_spincorrelation_vector(void)

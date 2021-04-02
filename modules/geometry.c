@@ -153,7 +153,7 @@ Spin Struct (is this something for the header?) and spinstruct_arr constructor
 static void spinstruct_alloc(spinstruct_t *spnstrct) {
   //allocate only for arrays?
   // safety feature to not allocate twice (initialzed pointers in struct are NULL )
-  if ((spnstrct->coord==NULL) | (spnstrct->nnidx==NULL)) {
+  if ((spnstrct->coord==NULL) && (spnstrct->nnidx==NULL)) {
     spnstrct->coord = (int *) malloc(sizeof(int)*D);
     spnstrct->nnidx = (int *) malloc(sizeof(int)*2*D);
   }
@@ -321,7 +321,6 @@ static void set_coord_blackwhite(int np, int *x) {
   }
 }
 
-//static spinstruct_t* q_blackwhite(void) {
 static spinstruct_t* set_spinarray_blackwhite(void) {
   // with constructor
   /*
@@ -339,6 +338,7 @@ static spinstruct_t* set_spinarray_blackwhite(void) {
   for (int i=0; i<int_pow(N, D); i++){
     spinstruct_alloc(&this[i]);
     this[i].idx = i;
+		//this[i].spinval = 1;
     // spinstruct_arr[i].spinval = function_that_assigns_spinvalue(); maybe do this when initalizing the hot/cold start
     set_coord_blackwhite(i, this[i].coord);
     set_nnarray(&this[i]);
@@ -378,6 +378,7 @@ static spinstruct_t* set_spinarray_lexo(void) {
   for (int i=0; i<int_pow(N, D); i++){
     spinstruct_alloc(&this[i]);
     this[i].idx = i;
+		//this[i].spinval = 1;
     // spinstruct_arr[i].spinval = function_that_assigns_spinvalue();
     set_coord_lexo(i, this[i].coord);
     set_nnarray(&this[i]);
