@@ -68,6 +68,7 @@ static int boundary_condition;
 static int *bc_ptr=NULL;
 static int ordering=1; // 0 for lexo and 1 for black white
 int nosite = -1; // should be unchangeable but open for other modules
+spinstruct_t *spinstruct_arr;
 
 
 
