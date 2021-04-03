@@ -322,7 +322,6 @@ static void set_coord_blackwhite(int np, int *x) {
   }
 }
 
-//static spinstruct_t* q_blackwhite(void) {
 static spinstruct_t* set_spinarray_blackwhite(void) {
   // with constructor
   /*
@@ -340,6 +339,7 @@ static spinstruct_t* set_spinarray_blackwhite(void) {
   for (int i=0; i<int_pow(N, D); i++){
     spinstruct_alloc(&this[i]);
     this[i].idx = i;
+		//this[i].spinval = 1;
     // spinstruct_arr[i].spinval = function_that_assigns_spinvalue(); maybe do this when initalizing the hot/cold start
     set_coord_blackwhite(i, this[i].coord);
     set_nnarray(&this[i]);
@@ -379,6 +379,7 @@ static spinstruct_t* set_spinarray_lexo(void) {
   for (int i=0; i<int_pow(N, D); i++){
     spinstruct_alloc(&this[i]);
     this[i].idx = i;
+		//this[i].spinval = 1;
     // spinstruct_arr[i].spinval = function_that_assigns_spinvalue();
     set_coord_lexo(i, this[i].coord);
     set_nnarray(&this[i]);

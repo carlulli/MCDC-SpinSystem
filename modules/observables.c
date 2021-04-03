@@ -3,6 +3,8 @@
 #include "geometry.h"
 #include "spin.h"
 #include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
 // initialize the static variables
 // static int N;
 // static int D;
@@ -51,7 +53,9 @@ double energy_density(void)
   double sum_next_neighbour_interaction = 0.0;
 
   int contrib_neighbor_index = 0;
-	int prod_neighbor_orientation ;
+
+	int prod_neighbor_orientation = 0 ;
+
 
   // loop over all the spins -> for each spin position the contribution of all the neighbours gets calculated
 
@@ -69,6 +73,7 @@ double energy_density(void)
       }
       //total energy. Ising  in each iteration the energy contribution of one spin site is added
       total_energy -=  spinstruct_arr[x].spinval * B/*magnetic field*/ ; // !
+			total_energy -= sum_next_neighbour_interaction ;
 
     }
   }
@@ -86,11 +91,11 @@ double energy_density(void)
       }
       //total energy. Clock.In each iteration the energy contribution of one spin site is added
       total_energy -=  spinval_values[spinstruct_arr[x].spinval] *  B/*magnetic field*/;  // check  !
-      // ? need to check wether its actually just the real parts that need to be multiplied
+      total_energy -= sum_next_neighbour_interaction ;  // ? need to check wether its actually just the real parts that need to be multiplied
 		}
   }
 
-	total_energy -= sum_next_neighbour_interaction ;   // the contribution of the next neighbor interaction gets added
+	//total_energy -= sum_next_neighbour_interaction ;   // the contribution of the next neighbor interaction gets added
 
   return total_energy/(int_pow(N, D));      //divide by size to get density
 }
