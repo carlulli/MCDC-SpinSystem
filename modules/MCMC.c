@@ -14,17 +14,24 @@ Structure:
 #include <math.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "geometry.h"
 #include "spin.h"
 
 extern spinstruct_t *spinstruct_arr;
+extern double *spinval_values;
+// extern double *spin_corr_vec;
 
 static inline void propose_spinvals(bool even);
 static double one_spin_hamiltonian(int x, bool bb_spin);
 static inline double min(double a, double b); // logically better in utilities, but since used here -> simpler
 static void MARS(bool even);
 
-
+void init_MCMC(void) {
+  spinval_values = set_spinval_values();  // creating the vector which has the real spinvalues for their orientation
+	// spin_corr_vec = set_spincorrelation_vector();
+  spinstruct_arr = set_spinarray();
+}
 
 static inline void propose_spinvals(bool even) {
   /*
@@ -61,15 +68,20 @@ static double one_spin_hamiltonian(int x, bool pp_spin ) { // x is the index of 
       if (pp_spin==true) { nnspinval = spinstruct_arr[contrib_neighbor_index].ppspinval; }
       else { nnspinval = spinstruct_arr[contrib_neighbor_index].spinval; }
 
-	     prod_neighbor_orientation = spinmultiplication(xspinval, nnspinval);
-      if (spinmodel==0) { one_spin_hamiltonian -= 2* prod_neighbor_orientation;} //for Ising the orientation is the same as the real value
-	    else if (spinmodel==1) { one_spin_hamiltonian -= 2* spinval_values[prod_neighbor_orientation];} // multiplied times two, to account for interaction going both ways.
-	     // multiplied times two, to account for interaction going both ways
+	    prod_neighbor_orientation = spinmultiplication(xspinval, nnspinval);
+
+      if (spinmodel==0) { one_spin_hamiltonian -= prod_neighbor_orientation;} //for Ising the orientation is the same as the real value
+	    else if (spinmodel==1) {
+        one_spin_hamiltonian -= spinval_values[prod_neighbor_orientation];
+      }
   }
   // magnetic field contribution
   // magnetic field contribution. For the Clock value the real value of the spin for the orientation has to be taken from spinval_values.
   if (spinmodel==0) { one_spin_hamiltonian -=  xspinval * B; } // s*B which for Ising is simply the orientation*B
-  else if (spinmodel==1) { one_spin_hamiltonian -=  spinval_values[xspinval] * B; }
+  else if (spinmodel==1) {
+    one_spin_hamiltonian -=  spinval_values[xspinval] * B;
+  }
+  else { printf("[MCMC.c | one_spin_hamiltonian()] Invalid spinmodel chosen. (Only 0 and 1 valid).\n"); exit(-1); }
 
   return one_spin_hamiltonian;
 }
