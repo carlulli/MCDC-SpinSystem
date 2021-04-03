@@ -22,6 +22,7 @@ static int spinmodel ; //!
 static int M_number_orient;
 static double B , T; // magnetic field and temperature
 static int seed;
+static int start_choice=0;
 
 double *spinval_values ;
 double *spin_corr_vec ;
@@ -37,6 +38,7 @@ void set_physics_params(int argc,  const char *argv[])
 	B = atof(argv[7]);
 	seed = atoi(argv[8]);
 	T = atof(argv[9]);
+	start_choice = atoi(argv[10]);
 
 }
 
@@ -63,7 +65,9 @@ double get_B(void) {
 	return B;
 }
 
-
+int get_start_choice(void) {
+	return start_choice;
+}
 
 
 void aligned_start_dir( int direction)

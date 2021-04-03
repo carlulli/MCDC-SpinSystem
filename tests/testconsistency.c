@@ -10,7 +10,10 @@ results for different spin modules but the same configuration
 // #include "MCMC.h"
 #include "spin.h"
 #include "observables.h"
+#include "utilities.h"
 
+extern spinstruct_t *spinstruct_arr;
+extern double *spinval_values;
 
 int main(int argc, char const *argv[]) {
   /*
@@ -22,16 +25,22 @@ int main(int argc, char const *argv[]) {
     - calculate and safe state energy
   */
   // Set inital parameters
-  set_params();
-  set_physics_params();
-  spinstruct_t *spinstruct_arr = set_spinarray();
-  srand(get_seed());
-  int hotstart = atoi(argv[9]); // if hotstart=1 -> hotstart, else cold start
-  int N=get_N(), D=get_D();
+  set_params(argc, argv);
+  set_physics_params(argc, argv);
+
+  spinstruct_arr = set_spinarray();
+
+  int spinmodel = get_spinmodel();
+  int seed = get_seed();
+  int start_choice = get_start_choice();
   double energy_dense1, energy_dense2;
 
+  spinval_values = set_spinval_values();
+
   // set initial spin orientations
-  if (hotstart==1) { hot_start();// function that sets spins to special spin configuration }
+  if (start_choice==1) {
+    srand(seed);
+    hot_start(); } // function that sets spins to special spin configuration
   else { cold_start(); }
 
   energy_dense1 = energy_density();
@@ -50,6 +59,8 @@ int main(int argc, char const *argv[]) {
     if (energy_dense1==energy_dense2) { printf("GREAT SUCCESS!\n"); }
     else { printf("Consistancy FAILED.\n");  }
 
+    free_spinval_values();
+    spinarray_free(spinstruct_arr);
 
   return 0;
 }
