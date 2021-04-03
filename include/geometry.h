@@ -18,7 +18,7 @@ typedef struct spinstruct { // can also have typedef in front
   int *nnidx; // doesnt need to be 2d as i am using array of structs
 } spinstruct_t; // if typedef at beginning -> use struct_tag here: spinstruct_t
 
-extern spinstruct_t *spinstruct_arr;
+// extern spinstruct_t *spinstruct_arr;
 
 void set_params(int argc, char const *argv[]);
 /* sets all nevessary parameters to create geometry */
