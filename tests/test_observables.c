@@ -184,7 +184,7 @@ Test of the energy density:
 Goal: See if the energy density for the cold and hot start are what we excpect
 *********************************************************************************/
 
-/* cold start: for each spin we have H = -B - 2D , so for a system of N length and Dimensions D, we expect H = N^D*(-B - 2D) and energy density = -B -2D
+/* cold start: for each spin we have H = -B - D , so for a system of N length and Dimensions D, we expect H = N^D*(-B - D) and energy density = -B -D
 */
 printf("\n \n Test of the energy density: \n \n");
 printf("1. test: The cold start \n");
