@@ -51,6 +51,10 @@ int main(int argc, char const *argv[])
 	int spinmodel = get_spinmodel();
 	int	seed = get_seed();
 	double T = get_T();
+	printf("\n \nYour chosen system: \n \n Size in one direction = %d\t Dimension = %d \t boundary_condition (0 for Dirichlet and 1 for periodic) = %d \t ordering (0 for lexo and 1 for blackwhite) = %d \n \n spinmodel (0 for Ising and 1 for Clock) = %d \t M_number_orient = %d \n\n"
+	 " magnetic field B = %f \t seed = %d \t temperature T = %f     \n ",N, D, boundary_condition, ordering, spinmodel, M_number_orient, B, seed, T );  
+
+
 	spinval_values = set_spinval_values();  // creating the vector which has the real spinvalues for their orientation
 	//spin_corr_vec = set_spincorrelation_vector();
 
