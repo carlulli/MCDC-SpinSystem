@@ -65,13 +65,16 @@ double energy_density(void)
       for(int y = 0; y < 2*D ; y++)              //loop for the getting the sum over next neighbour spins
       {
         contrib_neighbor_index = spinstruct_arr[x].nnidx[y];
+				if (contrib_neighbor_index == -1){
+					continue;
+				}
 				// small m for the spin product of two neighbors
         prod_neighbor_orientation = spinmultiplication(spinstruct_arr[x].spinval, spinstruct_arr[contrib_neighbor_index].spinval);
 				sum_next_neighbour_interaction += prod_neighbor_orientation; //
       }
       //total energy. Ising  in each iteration the energy contribution of one spin site is added
       total_energy -=  spinstruct_arr[x].spinval * B/*magnetic field*/ ; // !
-			total_energy -= sum_next_neighbour_interaction ;
+			total_energy -= sum_next_neighbour_interaction/2 ;
 
     }
   }
@@ -83,13 +86,16 @@ double energy_density(void)
       sum_next_neighbour_interaction = 0;            //for each spin the spins of all the neighbors get summed up
       for(int y = 0; y < 2*D ; y++)              //loop for the getting the sum over (2D) next neighbour spins
       {
-        contrib_neighbor_index = spinstruct_arr[x].nnidx[y];   // gets the index of one contributing neighbor
+        contrib_neighbor_index = spinstruct_arr[x].nnidx[y];
+				if (contrib_neighbor_index == -1){
+					continue;
+				}   // gets the index of one contributing neighbor
 				prod_neighbor_orientation = spinmultiplication(spinstruct_arr[x].spinval, spinstruct_arr[contrib_neighbor_index].spinval);  // orientation of product
 				sum_next_neighbour_interaction += spinval_values[prod_neighbor_orientation]; // ! adds the real part
       }
       //total energy. Clock.In each iteration the energy contribution of one spin site is added
       total_energy -=  spinval_values[spinstruct_arr[x].spinval] *  B/*magnetic field*/;  // check  !
-      total_energy -= sum_next_neighbour_interaction ;  // ? need to check wether its actually just the real parts that need to be multiplied
+      total_energy -= sum_next_neighbour_interaction/2 ;   // changed formula
 		}
   }
 
