@@ -19,6 +19,7 @@ Main code:
 #include <stdlib.h>
 #include <math.h>
 #include <complex.h>
+#include <string.h>
 #include "spin.h"
 #include "observables.h"
 #include "geometry.h"
@@ -51,16 +52,20 @@ int main(int argc, char const *argv[])
 	int	seed = get_seed();
 	double T = get_T();
 	spinval_values = set_spinval_values();  // creating the vector which has the real spinvalues for their orientation
-	spin_corr_vec = set_spincorrelation_vector();
+	//spin_corr_vec = set_spincorrelation_vector();
+
+	spinstruct_arr = set_spinarray();
 
 	double magnetization = 0.0; // variables to store the magnetization and energy density in.
 	double energy = 0.0;
 
 // opening textfile for saving the values
-FILE *fp *fp2, *fp3;
+FILE *fp, *fp2, *fp3;
 int namesize = 60;
 for (int i=1; i<=9; i++) { namesize += strlen(argv[9]); }
 char filename[namesize];
+char filename2[namesize];
+char filename3[namesize];
 snprintf( filename, sizeof(filename),
   "data/monte_carlo_em_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9]);
 
@@ -72,42 +77,45 @@ snprintf( filename3, sizeof(filename),
 // file for the energy density and the magnetization density.
 fp = fopen(filename, "w");
 fprintf(fp, "\n energy density \tmagnetization_density\n");
-fclose(fp);
+//fclose(fp);
 // file for ths spin-correlations.
 fp2 = fopen(filename2, "w");
 fprintf(fp2, "\n r \tcorrelation\n");
-fclose(fp2);
+//fclose(fp2);
 // file for the spin-configuration.
 fp3 = fopen(filename3, "w");
 fprintf(fp3, "\n idx \t spinvalue\n");
-fclose(fp3);
-
+//fclose(fp3);
+//fp = fopen(filename, "w");
+// fp2 = fopen(filename2, "w");
+// fp3 = fopen(filename3, "w");
 /* Monte Carlo loop */
-for (int i = 0 ; i< 10000; i++)
+hot_start();
+for (int i = 0 ; i< 100000; i++)
 {
-	void MCMC_step(void)(); // does one Monte Carlo step, thereby given the spins a new configuration
+	MCMC_step(); // does one Monte Carlo step, thereby given the spins a new configuration
 	energy = energy_density();
 	magnetization = mag_density();
 	// prints out the energy and magnetization (densities) every run.
-	fp = fopen(filename, "w");
+
 	fprintf(fp,"%.16e\t%.16e\n",energy, magnetization);
-	fclose(fp);
+
 
 
 	if ((i%10) == 0 ) // prints out the spin correlation every 10th run.
 	{
 		spin_corr_vec = set_spincorrelation_vector();
-		fp2 = fopen(filename2, "w");
+
 		fprintf(fp2,"Monte Carlo round:%d \n",i );
 		for (int j = 0; j< N/2; j++ )
 		{
 			fprintf(fp2,"%d\t%.16e\n",j, spin_corr_vec[j]);
 		}
-		fclose(fp2);
+
 	}
-	if ((i%100) == 0 ) // print out the spin configuration every 100th run.
+	if ((i%1000) == 0 ) // print out the spin configuration every 100th run.
 	{
-		fp3 = fopen(filename3, "w");
+
 		fprintf(fp3,"Monte Carlo round:%d \n",i );
 		for (int f = 0; f< int_pow(N,D); f++ )
 		{
@@ -120,12 +128,16 @@ for (int i = 0 ; i< 10000; i++)
 				fprintf(fp3,"%d\t%.16e\n",f, spinval_values[spinstruct_arr[f].spinval] );
 			}
 		}
-		fclose(fp3);
+
 	}
+	//fclose(fp);
+	// fclose(fp2);
+	// fclose(fp3);
 
 }
-
-
+fclose(fp);
+fclose(fp2);
+fclose(fp3);
 
 
 
