@@ -1,0 +1,2 @@
+NSTEPS   MEAN   VAR   CORR
+100000      0      5     0.5

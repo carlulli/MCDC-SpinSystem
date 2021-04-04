@@ -35,6 +35,7 @@ int get_spinmodel(void);
 
 double get_T(void);
 
+int get_start_choice(void);
 
 // void anti_aligned_start_black_white( int direction);    might not be needed
 
