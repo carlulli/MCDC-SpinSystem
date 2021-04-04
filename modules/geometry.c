@@ -94,6 +94,7 @@ void set_params(int argc, char const *argv[]) {
   if (argc < 5) {
     printf("[goemetry.c | set_params()] ERROR: Not enough input parameters. \n"
     "\t\t You need min 5 and had: {%d}\n \t\t Remember: [filename] [N] [D] [boundary condition] [ordering]\n", argc);
+		exit(-1);
   }
   N = atoi(argv[1]);
   D = atoi(argv[2]);

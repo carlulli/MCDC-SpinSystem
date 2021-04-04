@@ -244,15 +244,14 @@ double spin_spin_correlation_r(int r)
 	int index_spin2 ;
 	int orient_spin1;
 	int orient_spin2;
-  int index_product ;
-
+  int index_product = 0;
 	double correlation_sum = 0.0 ;
 
 	// different sums for the different dimensions
 	// 1 Dimension
 	if (D == 1)
 	{
-		for(int x1=0 ; x1< N-1 ; x1++ )
+		for(int x1=0 ; x1< (N-1) ; x1++ )
 		{
 			// first the coordinate vectors get created using the indices of the sum.
 			coordvector_spin1[0] = x1 ;
@@ -263,6 +262,7 @@ double spin_spin_correlation_r(int r)
 			// then the spinorientations at those indices are looked up
 			orient_spin1 = spinstruct_arr[index_spin1].spinval;
 			orient_spin2 = spinstruct_arr[index_spin2].spinval;
+
 			// here the two spins are multiplied  ! again the question arises whether taking the real part is the right thing to do
 
 			index_product = spinmultiplication(orient_spin1,orient_spin2); // index of the spinproduct for each summand
