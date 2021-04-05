@@ -220,7 +220,7 @@ double * set_spinval_values(void)
 	int M_number_orient = get_M_number_orient();
 
   for (int i = 0 ; i < M_number_orient; i++){
-    spinval_values[i] = cos(2 * M_PI * i / M_number_orient ) ;     //
+    spinval_values[i] = cos(2 * M_PI * i / M_number_orient ) ;
   }
 	return spinval_values ;
 }
