@@ -3,6 +3,9 @@ Test to check if full magnetization can be reached for when temperature is
 close to zero -> accepting only better energy spin flips
 Input values:
 [N] [D] [boundary_condition] [ordering] [spinmodel] [M_number_orient] [B] [seed] [T]
+
+this needs way more iterations than proposed in the report!!!
+and should probably only work correctly with the statistical analysis part
 ********************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +18,7 @@ Input values:
 
 extern spinstruct_t *spinstruct_arr;
 extern double *spinval_values;
-extern double *spin_corr_vec;
+// extern double *spin_corr_vec;
 
 int main(int argc, char const *argv[]) {
   /*
@@ -30,11 +33,12 @@ int main(int argc, char const *argv[]) {
 
   // void init_MCMC(void);
 
-  int T, ordering, boundary_condition, spinmodel;
+  int T, ordering, boundary_condition, spinmodel, seed;
   T = get_T();
   ordering = get_ordering();
   boundary_condition = get_boundary_condition();
   spinmodel = get_spinmodel();
+  seed = get_seed();
 
   // spin_corr_vec = set_spincorrelation_vector();
   spinval_values = set_spinval_values();
@@ -49,12 +53,23 @@ int main(int argc, char const *argv[]) {
   "This should take long enough for all spins to flip in one direction.\n"
   "For a 4x4 lattice with Ising model 16 spins should point in the same direction.\n");
 
-  int iterations=100;
+  hot_start();
+  srand(seed);
+
+  int iterations=1000000;
   for (int i=0; i<iterations; i++) {
     MCMC_step();
     // printf("[testfullmag.c] DEBUGGING \n");
     // exit(-1);
-
+    printf("Spin orientation values:\n"
+    " %d, %d, %d, %d\n"
+    " %d, %d, %d, %d\n"
+    " %d, %d, %d, %d\n"
+    " %d, %d, %d, %d\n",
+    spinstruct_arr[14].spinval, spinstruct_arr[6].spinval, spinstruct_arr[15].spinval, spinstruct_arr[7].spinval,
+    spinstruct_arr[4].spinval, spinstruct_arr[12].spinval, spinstruct_arr[5].spinval, spinstruct_arr[13].spinval,
+    spinstruct_arr[10].spinval, spinstruct_arr[2].spinval, spinstruct_arr[11].spinval, spinstruct_arr[3].spinval,
+    spinstruct_arr[0].spinval, spinstruct_arr[8].spinval, spinstruct_arr[1].spinval, spinstruct_arr[9].spinval );
   }
 
 
