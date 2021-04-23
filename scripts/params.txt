@@ -1,0 +1,32 @@
+# Parameter file for spin system simulations
+# Change parameters here (or with seperate script)
+
+# Number of lattice sites in one dimension
+N   4
+
+# Dimensions (recommended 2)
+D   2
+
+# ordering choice: 0 for lexo and 1 for black white (1 recommended)
+ordering    1
+
+# boundary condition: 0 for Dirichlet and 1 for periodic (1 recommended)
+boundary_condition    1
+
+# spinmodel choice: 0 for Ising and 1 for clock model
+spinmodel   1
+
+# possible number of valid spin orientations
+M_number_orient   2
+
+# value for external magnetic field
+B   0.1
+
+# value for seed
+seed    0
+
+# value for the temperature
+T   300
+
+# start choice: 0 for cold start and 1 for hot start
+start_choice    1
