@@ -48,11 +48,12 @@ static inline void propose_spinvals(bool even) {
   }
 }
 
-// rewrtie this function so it works for proposed spin and curent spin
+// rewrite this function so it works for proposed spin and current spin
 // static double one_spin_hamiltonian(int x) {
 static double one_spin_hamiltonian(int x, bool pp_spin ) { // x is the index of the spin for which you are calculating the hamiltonian
 /* function which returns the hamiltonian for a single spin with index x.*/
-  int D, B;
+  int D;
+  double B;
   D = get_D();
   B = get_B();
   int prod_neighbor_orientation, contrib_neighbor_index, xspinval, nnspinval, spinmodel;
@@ -64,9 +65,11 @@ static double one_spin_hamiltonian(int x, bool pp_spin ) { // x is the index of 
   for(int i=0; i<2*D; i++)	{
 	      // getting the index of the i-th neighbor.
 	     contrib_neighbor_index = spinstruct_arr[x].nnidx[i];
+       if (contrib_neighbor_index == NOSITE) continue; //skip all next neighbors that are out of bounds (dbc)
 	     // multiplying with said neighbor and saving the orientation that characterizes the product.
-      if (pp_spin==true) { nnspinval = spinstruct_arr[contrib_neighbor_index].ppspinval; }
-      else { nnspinval = spinstruct_arr[contrib_neighbor_index].spinval; }
+      // if (pp_spin==true) { nnspinval = spinstruct_arr[contrib_neighbor_index].ppspinval; }
+      // else { nnspinval = spinstruct_arr[contrib_neighbor_index].spinval; }
+      nnspinval = spinstruct_arr[contrib_neighbor_index].spinval; // current spinvalues of next neighbors is always the background!
 
 	    prod_neighbor_orientation = spinmultiplication(xspinval, nnspinval);
 
@@ -94,7 +97,7 @@ static void MARS(bool even) {
   /*
     Function makes accept/reject step for either all even or all odd spin values:
     takes decision about even or odd values and may change spinstruct_arr[even/odd].spinval or keep old ones
-    1. decides on spinarray index range (0-len(spinarry)/2 = even & len(spinarry)/2-len(spinarray) = odd)
+    1. decides on spinarray index range: 0-len(spinarry)/2 = even , len(spinarry)/2-len(spinarray) = odd
     2. calculates the sum of hamiltonians for this range for current (n or s) and proposed (p or pp) spinconfiguration
       -  for all x in range: h_n,p(x) = -2Re[s_n,p(x)*b(x)]-B*Re[s_n,p(x)]
     3. calculates accept value for ergodicity
@@ -104,7 +107,8 @@ static void MARS(bool even) {
       - else: s_n(x)
   */
   // IF IT SHOULD BE WRITTEN FOR BOTH ORDERINGS -> loop has to be different (but idea with using all even and all odd updating is only good when this ordering is used)
-  double hsum_pp=0.0, hsum_s=0.0, val_accept; // sum of hamiltonian values for proposed and current spins value, accept value (q_s,n^a in desc.)
+  // double hsum_pp=0.0, hsum_s=0.0, val_accept; // sum of hamiltonian values for proposed and current spins value, accept value (q_s,n^a in desc.)
+  double pp=0.0, h=0.0, val_accept;
   double T = get_T(); // how does random(x) work?
   int startidx, maxidx, D = get_D(), N = get_N();
 
@@ -113,20 +117,34 @@ static void MARS(bool even) {
 
   for (int idx=startidx; idx<maxidx; idx++) {
     // hsum_pp += one_spin_hamiltonian(pp_arr[idx]);
-    hsum_pp += one_spin_hamiltonian(spinstruct_arr[idx].idx, true); // if ppspinval in spinstruct_t
-    hsum_s += one_spin_hamiltonian(spinstruct_arr[idx].idx, false); // 'spinstruct_arr[idx].idx' should be the same as just 'idx'
-  }
+    pp = one_spin_hamiltonian(spinstruct_arr[idx].idx, true); // if ppspinval in spinstruct_t
+    s = one_spin_hamiltonian(spinstruct_arr[idx].idx, false); // 'spinstruct_arr[idx].idx' should be the same as just 'idx'
 
-  val_accept = min( 1, exp((-1)*(double)(hsum_pp-hsum_s)/(double)T) );
+    val_accept = min( 1, exp((-1)*(double)(pp-s)/(double)T) );
 
-  for (int idx=startidx; idx<maxidx; idx++) {
-    // if (hsum_s >= usum_pp) { spinstruct_arr[idx].spinval = spinstruct_arr[idx].ppspinval; } // else if is same as (hsum_s >= usum_pp || random[idx] < val_accept)
+    // if (s >= pp) { spinstruct_arr[idx].spinval = spinstruct_arr[idx].ppspinval; } // else if is same as (s >= pp || random[idx] < val_accept)
     // else if (random[idx] < val_accept) { spinstruct_arr[idx].spinval = spinstruct_arr[idx].ppspinval; }
-    if (hsum_s >= hsum_pp || ((double) rand())/RAND_MAX < val_accept) { // random(x) -> make new random number in each loop step
+    if (s >= pp || ((double) rand())/RAND_MAX < val_accept) { // random(x) -> make new random number in each loop step
       spinstruct_arr[idx].spinval = spinstruct_arr[idx].ppspinval;
     }
   }
 }
+
+// for (int idx=startidx; idx<maxidx; idx++) {
+//   // hsum_pp += one_spin_hamiltonian(pp_arr[idx]);
+//   hsum_pp += one_spin_hamiltonian(spinstruct_arr[idx].idx, true); // if ppspinval in spinstruct_t
+//   hsum_s += one_spin_hamiltonian(spinstruct_arr[idx].idx, false); // 'spinstruct_arr[idx].idx' should be the same as just 'idx'
+// }
+//
+// val_accept = min( 1, exp((-1)*(double)(hsum_pp-hsum_s)/(double)T) );
+//
+// for (int idx=startidx; idx<maxidx; idx++) {
+//   // if (hsum_s >= usum_pp) { spinstruct_arr[idx].spinval = spinstruct_arr[idx].ppspinval; } // else if is same as (hsum_s >= usum_pp || random[idx] < val_accept)
+//   // else if (random[idx] < val_accept) { spinstruct_arr[idx].spinval = spinstruct_arr[idx].ppspinval; }
+//   if (hsum_s >= hsum_pp || ((double) rand())/RAND_MAX < val_accept) { // random(x) -> make new random number in each loop step
+//     spinstruct_arr[idx].spinval = spinstruct_arr[idx].ppspinval;
+//   }
+// }
 
 void MCMC_step(void) {
   /*
@@ -140,6 +158,12 @@ void MCMC_step(void) {
         - background can be calculated with already changed spins (but only if MARS was performed on them)
     4. MARS step
   */
+  int ordering = get_ordering();
+  if (ordering != 1) {
+    printf("[MCMC.c | MCMC_step()] ERROR. Actual MCMC updating only works with black white (odd/even) ordering.\n"
+    "Choose 1 as 4th input variable (file name counting as 0)\n");
+    exit(-1);
+  }
   propose_spinvals(true);
   MARS(true);
   propose_spinvals(false);

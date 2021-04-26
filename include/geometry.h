@@ -6,6 +6,8 @@ At module's beginning, a detailed list of functions is written.
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
+#define NOSITE -1
+
 typedef struct spinstruct { // can also have typedef in front
   /*
   structure that contains all values belonging to one lattive site:

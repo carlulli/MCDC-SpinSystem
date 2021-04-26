@@ -31,15 +31,15 @@ double *spin_corr_vec;
 
 int main(int argc, char const *argv[])
 {
-
-	set_params(argc, argv); // setting up the geometry
-	set_physics_params(argc,argv);  // and the physical parameters
 	if (argc != 10 ) {
 		printf(" Hello, this is not the right amount of input parameters. \n"
-    " The program requires the following 10 parameters (You had: {%d})\n  "
+		" The program requires the following 10 parameters (You had: {%d})\n  "
 		"Remember: [filename] [N] [D] [boundary condition] [ordering] [spinmodel] [M_number_orient] [double B] [seed] [double T] \n", argc);
 		exit(-1);
 	}
+	set_params(argc, argv); // setting up the geometry
+	set_physics_params(argc,argv);  // and the physical parameters
+
 
 	int N = get_N() ;
 	int D = get_D() ;

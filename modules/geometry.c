@@ -66,8 +66,8 @@ static int N=0; // N = Number of lattice sites in one direction (per dimension)
 static int lattice_spacing=1; // lattice spacing fixed to 1 in this project! if double -> problem in n_of_x_lexo
 static int boundary_condition;
 static int *bc_ptr=NULL;
-static int ordering=1; // 0 for lexo and 1 for black white
-int nosite = -1; // should be unchangeable but open for other modules
+static int ordering=-1; // 0 for lexo and 1 for black white
+// int nosite = -1; // should be unchangeable but open for other modules //now compiler MACRO in header
 spinstruct_t *spinstruct_arr;
 
 
@@ -110,6 +110,7 @@ void set_params(int argc, char const *argv[]) {
     printf("[geometry.c | set_params()] Boundary Condition out of bounds. Should be 0 for Dirichlet and 1 for periodic. \n");
     exit(-1);
   }
+  if (bc_ptr != NULL) printf("[geometry.c | set_params()]ERROR. Boundary conditions already set.\n"); exit(-1);
   boundary_condition = atoi(argv[3]);
   bc_ptr = &boundary_condition;
   ordering = atoi(argv[4]);
@@ -134,7 +135,7 @@ int get_D() {
     if(sD==0) { sD=D; }
     else {
       if((D!=sD))  {
-         printf("[ geometry.c| get_N ] Error! (D) has changed: (%d) -> (%d)\n",sD,D);
+         printf("[ geometry.c| get_D() ] Error! (D) has changed: (%d) -> (%d)\n",sD,D);
          exit(-1);
       }
     }
@@ -142,10 +143,28 @@ int get_D() {
 }
 
 int get_ordering() {
+  static int sORD=-1;
+  if(ordering==-1) { printf("[ geometry.c| get_ordering() ] Error! ordering not yet set!\n"); exit(-1); }
+  if(sORD==-1) { sORD=ordering; }
+  else {
+    if (ordering!=sORD)  {
+       printf("[ geometry.c| get_ordering() ] Error! (ordering) has changed: (%d) -> (%d)\n",sORD,ordering);
+       exit(-1);
+    }
+  }
   return ordering;
 }
 
 int get_boundary_condition() {
+  static int sBC=-1;
+  if(boundary_condition==-1) { printf("[ geometry.c| get_ordering() ] Error! ordering not yet set!\n"); exit(-1); }
+  if(sBC==-1) { sBC=boundary_condition; }
+  else {
+    if (boundary_condition!=sBC)  {
+       printf("[ geometry.c| get_bounary_condition() ] Error! (bounary_condition) has changed: (%d) -> (%d)\n",sBC,boundary_condition);
+       exit(-1);
+    }
+  }
   return boundary_condition;
 }
 
@@ -292,7 +311,7 @@ static void set_nnarray(spinstruct_t *spnstrct) {
     nnx[i/2] = spnstrct->coord[i/2]+int_pow(-1,i); // because of integer devision in index: i=0 -> [0/2]=0, i=1 -> [1/2]=0, i=0 -> [2/2]=1, ...
 
     if (nnx[i/2]==N || nnx[i/2]==-1) {
-      if (boundary_condition==0) { spnstrct->nnidx[i]=nosite; }
+      if (boundary_condition==0) { spnstrct->nnidx[i]=NOSITE; }
       else if (boundary_condition==1) {
         nnx[i/2]=(nnx[i/2]+N)%N;
         spnstrct->nnidx[i] = n_of_x(nnx);
