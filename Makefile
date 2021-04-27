@@ -31,10 +31,10 @@ INCLUDE = -I $(IDIR)
 # it will look for the depency before running the below command(s)
 all:
 		$(CC) $(CFLAGS) $(INCLUDE) $(MODULES) $(MAIN).c -o $(MAIN).exe
-		$(CC) $(CFLAGS) $(INCLUDE) $(MODULES) $(TDIR)$(TEST_LIN).c -o $(TEST_OBS).exe
-		$(CC) $(CFLAGS) $(INCLUDE) $(MODULES) $(TDIR)$(TEST_ANAL).c -o $(TEST_FULLMAG).exe
-		$(CC) $(CFLAGS) $(INCLUDE) $(MODULES) $(TDIR)$(TEST_UNI).c -o $(TEST_GEO).exe
-		$(CC) $(CFLAGS) $(INCLUDE) $(MODULES) $(TDIR)$(TEST_GAUSS).c -o $(TEST_CON).exe
+		$(CC) $(CFLAGS) $(INCLUDE) $(MODULES) $(TDIR)$(TEST_OBS).c -o $(TEST_OBS).exe
+		$(CC) $(CFLAGS) $(INCLUDE) $(MODULES) $(TDIR)$(TEST_FULLMAG).c -o $(TEST_FULLMAG).exe
+		$(CC) $(CFLAGS) $(INCLUDE) $(MODULES) $(TDIR)$(TEST_GEO).c -o $(TEST_GEO).exe
+		$(CC) $(CFLAGS) $(INCLUDE) $(MODULES) $(TDIR)$(TEST_CON).c -o $(TEST_CON).exe
 
 # maybe its better to compile and link seperately
 # all: $(OBJECT_FILES)
