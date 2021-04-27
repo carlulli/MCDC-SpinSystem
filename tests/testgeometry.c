@@ -14,6 +14,11 @@ ONLY FOR 2D at the moment
 
 int main(int argc, char const *argv[]) {
   /* input at runtime: file name [N] [D] [boundary_condition] [ordering]  */
+  printf("\nThis program prints multiple index and coordinate values of a 4x4 spin system to check if ordering works corretly.\n\n");
+  if (argc!= 5) {
+    printf("ERROR. Invalid number of input params. Remember input at runtime: file name [N] [D] [boundary_condition] [ordering] \n");
+    exit(-1);
+  }
   set_params(argc, argv);
 
   // spinstruct_t *spinarray=NULL;
@@ -24,7 +29,8 @@ int main(int argc, char const *argv[]) {
   int arrsize, dim;
   arrsize=get_arraysize();
   dim=get_D();
-  printf("\nThis program prints multiple index and coordinate values of a 4x4 spin system to check if ordreing works corretly.\n\n");
+  if (dim!=2) printf("ERROR: Test works only for 2D at the moment\n"); exit(-1);
+
   printf("Chosen ordering (lexo=0, blackwhite=1) and boundary condition (Dirichlet=0, Periodic=1) as recovered (lexo=0, blackwhite=1):\n"
           "\tordering=%d, boundary condition=%d\n",
           get_ordering(),
@@ -41,7 +47,7 @@ int main(int argc, char const *argv[]) {
           "\t     0  1  2  3 x\n");
   }
   else if (atoi(argv[4])==0) {
-    printf("Lexographic Ordering:\n");
+    printf("Lexographic Ordering for N=4 and D=2 (a=1):\n");
     printf("\ty | \n"
           "\t3-| 12 13 14 15  \n"
           "\t2-|  8  9 10 11  \n"
