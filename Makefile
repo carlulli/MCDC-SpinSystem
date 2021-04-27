@@ -11,7 +11,7 @@ TDIR	= $(DIR)tests/
 CC = gcc
 OPTIMIZATION = -O2
 # -Wall gcc warnings during compilation
-CFLAGS = -Wall $(OPTIMIZATION)
+CFLAGS = -Wall -lm $(OPTIMIZATION)
 
 # variables with executable files
 TEST_OBS = test_observables
