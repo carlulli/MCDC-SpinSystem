@@ -110,7 +110,10 @@ void set_params(int argc, char const *argv[]) {
     printf("[geometry.c | set_params()] Boundary Condition out of bounds. Should be 0 for Dirichlet and 1 for periodic. \n");
     exit(-1);
   }
-  if (bc_ptr != NULL) printf("[geometry.c | set_params()]ERROR. Boundary conditions already set.\n"); exit(-1);
+  if (bc_ptr != NULL) {
+    printf("[geometry.c | set_params()]ERROR. Boundary conditions already set.\n");
+    exit(-1);
+  }
   boundary_condition = atoi(argv[3]);
   bc_ptr = &boundary_condition;
   ordering = atoi(argv[4]);
