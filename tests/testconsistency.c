@@ -24,9 +24,26 @@ int main(int argc, char const *argv[]) {
     - initialize hot or cold start for other spinmodule
     - calculate and safe state energy
   */
+  printf("\nThis test calculates the energy density twice with the same spin configuration.\n"
+  "but with opposite spinmodels. (1=clock model and 0=ising model)\n"
+  "Therefore, the choice of spin orientation values of the clock model is restricted to even values,
+  that are valid for the Ising model as well.");
+
   // Set inital parameters
   set_params(argc, argv);
   set_physics_params(argc, argv);
+
+  // NEW STUFF BEGINNING
+  int number_orient = get_M_number_orient();
+  if (number_orient%2 != 0) {
+    printf("ERROR Test only works for even number of orientations (M)\n"
+    "Change the 5th input value to an even number (not counting the file name)\n");
+    exit(-1);
+  }
+  //for now i couldnt find out a better way then essentially hardcoding 2
+  // without changing stuff in other modules
+  number_orient = number_orient/number_orient*2;
+  // NEW STUFF FINISHED
 
   spinstruct_arr = set_spinarray();
 
@@ -48,8 +65,7 @@ int main(int argc, char const *argv[]) {
   spinmodel = (1-spinmodel);
   energy_dense2 = energy_density();
 
-  printf("\nThis test calculates the energy density twice with the same spin configuration.\n"
-  "but with opposite spinmodels. (1=clock model and 0=ising model)\n");
+
   printf("Energy density of spinmodel %d = %f\n" "Energy density of spinmodel %d = %f\n",
     1-spinmodel,
     energy_dense1,

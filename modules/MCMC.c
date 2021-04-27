@@ -108,9 +108,11 @@ static void MARS(bool even) {
   */
   // IF IT SHOULD BE WRITTEN FOR BOTH ORDERINGS -> loop has to be different (but idea with using all even and all odd updating is only good when this ordering is used)
   // double hsum_pp=0.0, hsum_s=0.0, val_accept; // sum of hamiltonian values for proposed and current spins value, accept value (q_s,n^a in desc.)
-  double pp=0.0, h=0.0, val_accept;
+  double pp=0.0, s=0.0, val_accept;
   double T = get_T(); // how does random(x) work?
   int startidx, maxidx, D = get_D(), N = get_N();
+
+  printf("MCMC running...\n");
 
   if (even==true) { startidx = 0; maxidx = (pow(N,D))/2; }
   else { startidx = (pow(N,D))/2; maxidx = pow(N,D); }
@@ -126,7 +128,9 @@ static void MARS(bool even) {
     // else if (random[idx] < val_accept) { spinstruct_arr[idx].spinval = spinstruct_arr[idx].ppspinval; }
     if (s >= pp || ((double) rand())/RAND_MAX < val_accept) { // random(x) -> make new random number in each loop step
       spinstruct_arr[idx].spinval = spinstruct_arr[idx].ppspinval;
+      printf("Spin flip accepted...\n");
     }
+    else { printf("Spin flip denied...\n"); }
   }
 }
 
