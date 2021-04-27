@@ -14,22 +14,30 @@ ONLY FOR 2D at the moment
 
 int main(int argc, char const *argv[]) {
   /* input at runtime: file name [N] [D] [boundary_condition] [ordering]  */
+
   printf("\nThis program prints multiple index and coordinate values of a 4x4 spin system to check if ordering works corretly.\n\n");
   if (argc!= 5) {
-    printf("ERROR. Invalid number of input params. Remember input at runtime: file name [N] [D] [boundary_condition] [ordering] \n");
+    printf("ERROR. Invalid number of input params. Remember input at runtime: file name [N] [D] [boundary_condition] [ordering] \n"
+    "Test currently only works for N=4 & D=2\n");
     exit(-1);
   }
+
   set_params(argc, argv);
+
 
   // spinstruct_t *spinarray=NULL;
   // set_spinarray(spinarray);
   spinstruct_t *spinstruct_arr = set_spinarray();
   // spinarray = spinstruct_arr;
 
+
   int arrsize, dim;
   arrsize=get_arraysize();
   dim=get_D();
-  if (dim!=2) printf("ERROR: Test works only for 2D at the moment\n"); exit(-1);
+  if (dim!=2) {
+    printf("ERROR: Test works only for 2D at the moment\n");
+    exit(-1);
+  }
 
   printf("Chosen ordering (lexo=0, blackwhite=1) and boundary condition (Dirichlet=0, Periodic=1) as recovered (lexo=0, blackwhite=1):\n"
           "\tordering=%d, boundary condition=%d\n",

@@ -27,7 +27,8 @@ int main(int argc, char const *argv[]) {
   printf("\nThis test calculates the energy density twice with the same spin configuration.\n"
   "but with opposite spinmodels. (1=clock model and 0=ising model)\n"
   "Therefore, the choice of spin orientation values of the clock model is restricted to even values,"
-  "that are valid for the Ising model as well.\n");
+  "that are valid for the Ising model as well.\n"
+  "Remember: ./testconsistency.exe [N] [D] [boundary condition] [ordering] [spinmodel] [M_number_orient] [double B] [seed] [double T] \n");
 
   // Set inital parameters
   set_params(argc, argv);
