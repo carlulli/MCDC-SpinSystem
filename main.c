@@ -1,4 +1,4 @@
-/***************************************************+***************************
+_%s/***************************************************+***************************
 Main code:
 - reads in parameter file
 - initializes lattice, i.e., geomerty
@@ -71,12 +71,12 @@ char filename[namesize];
 char filename2[namesize];
 char filename3[namesize];
 snprintf( filename, sizeof(filename),
-  "data/monte_carlo_em_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9]);
+  "data/monte_carlo_em_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9], argv[10]);
 
 snprintf( filename2, sizeof(filename),
-	"data/monte_carlo_corr_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9]);
+	"data/monte_carlo_corr_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9], argv[10]);
 snprintf( filename3, sizeof(filename),
-	"data/monte_carlo_config_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9]);
+	"data/monte_carlo_config_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9], argv[10]);
 
 // file for the energy density and the magnetization density.
 fp = fopen(filename, "w");
