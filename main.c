@@ -110,7 +110,7 @@ for (int i = 0 ; i< 100000; i++)
 	{
 		spin_corr_vec = set_spincorrelation_vector();
 
-		fprintf(fp2,"Monte Carlo round:%d \n",i );
+		// fprintf(fp2,"Monte Carlo round:%d \n",i );
 		for (int j = 0; j< N/2; j++ )
 		{
 			fprintf(fp2,"%d\t%.16e\n",j, spin_corr_vec[j]);
@@ -120,7 +120,7 @@ for (int i = 0 ; i< 100000; i++)
 	if ((i%1000) == 0 ) // print out the spin configuration every 100th run.
 	{
 
-		fprintf(fp3,"Monte Carlo round:%d \n",i );
+		// fprintf(fp3,"Monte Carlo round:%d \n",i );
 		for (int f = 0; f< int_pow(N,D); f++ )
 		{
 			if (spinmodel == 0)

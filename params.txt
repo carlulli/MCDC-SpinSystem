@@ -1,5 +1,5 @@
 # Number of lattice sites in one dimension
-N=4
+N=64
 
 
 # Dimensions (recommended 2)
@@ -15,7 +15,7 @@ ordering=1
 
 
 # spinmodel choice: 0 for Ising and 1 for clock model
-spinmodel=1
+spinmodel=0
 
 
 # possible number of valid spin orientations
