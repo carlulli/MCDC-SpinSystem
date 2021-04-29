@@ -418,6 +418,11 @@ spinstruct_t* set_spinarray(void) {
   spinstruct_t *spnstrctarr_ptr=NULL;
   if (bc_ptr==NULL) { printf("[geometry.c | set_spinarray()] ERROR! Params not set!\n"); exit(-1); }
 
+  if (spnstrctarr_ptr != NULL) {
+    printf("[geometry.c | set_spinarray()] ERROR spnstrctarr_ptr not NULL! \n");
+    exit(-1);
+  }
+
   if (ordering==0) { spnstrctarr_ptr = set_spinarray_lexo(); }
   else if (ordering==1) { spnstrctarr_ptr = set_spinarray_blackwhite(); }
 
