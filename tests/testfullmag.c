@@ -62,7 +62,7 @@ int main(int argc, char const *argv[]) {
     "- Temperatur small < 1.e-7\n"
     "- Ordering black white = 1\n"
     "- Boundary Condition periodic = 1\n"
-    "- spinmodel clock model = 1"
+    "- spinmodel clock model = 1\n"
     "You had T=%s, ordering=%s, boundary condition=%s, spinmodel=%s from input\n"
     "Inputs came out as: T=%.5e, ordering=%d, boundary condition=%d, spinmodel=%d\n"
     "Input numbers: T = 10/11, Ordering = 5/11, Boundary condition = 4/11, spinmodel = 6/11\n\n",
