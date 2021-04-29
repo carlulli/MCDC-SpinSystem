@@ -1,5 +1,8 @@
 import pandas as pd
-from subprocess import run
+import subprocess
+# import time
+# import os
+# import signal
 
 
 # python script to execute the main using a params txt file
@@ -51,7 +54,11 @@ for i in range(len(paramsvals)):
     args.append(paramsvals[i])
 print(args)
 
-# main = run(args)
-main = run(args)
 
-print(main)
+process = subprocess.run(args)
+# TRYING TO FIGURE OUT HOW TO MAKE KILLING WITH STRG + C POSSIBLE
+# process = subprocess.Popen(args)
+# time.sleep(5)
+# os.kill(process.pid, signal.SIGINT)
+
+print(process)
