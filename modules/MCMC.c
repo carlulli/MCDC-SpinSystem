@@ -78,6 +78,7 @@ static double one_spin_hamiltonian(int x, bool pp_spin ) { // x is the index of 
         one_spin_hamiltonian -= spinval_values[prod_neighbor_orientation];
       }
   }
+  one_spin_hamiltonian *= 0.5; //normalization
   // magnetic field contribution
   // magnetic field contribution. For the Clock value the real value of the spin for the orientation has to be taken from spinval_values.
   if (spinmodel==0) { one_spin_hamiltonian -=  xspinval * B; } // s*B which for Ising is simply the orientation*B
