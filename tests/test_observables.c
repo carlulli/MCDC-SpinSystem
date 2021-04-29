@@ -28,6 +28,7 @@ spinstruct_t *spinstruct_arr;
 double *spinval_values;
 double *spin_corr_vec;
 static int testnumber;
+
 void set_test(int argc, char const *argv[]) {
   // if argc not some value -> error message and exit
   if (argc !=11 ) {
@@ -38,6 +39,13 @@ void set_test(int argc, char const *argv[]) {
 		exit(-1);
   }
 	testnumber = atoi(argv[10]);
+  int N;
+  N = atoi(argv[2]);
+  if (testnumber > N/2) {
+    printf("ERROR. Testnumber has to be >= N/2.\n"
+    "Check your input values again. N and testnumber are the 1. and the 10th input after ./test_observables.exe\n\n");
+    exit(-1);
+  }
 }
 
 int main(int argc, char const *argv[])
