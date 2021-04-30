@@ -144,6 +144,7 @@ int main(int argc, char const *argv[])
 			{
 				fprintf(fp2,"%d\t%.16e\n",j, spin_corr_vec[j]);
 			}
+			free_spin_corr_vec(); // free after each iteration
 		}
 		if ((i%1000) == 0 ) // print out the spin configuration every 100th run.
 		{
@@ -166,7 +167,7 @@ int main(int argc, char const *argv[])
 	fclose(fp3);
 
 /* freeing the no longer needed vectors */
-	free_spin_corr_vec();
+	// free_spin_corr_vec();
 	free_spinval_values();
 	spinarray_free(spinstruct_arr);
 	return 0 ;
