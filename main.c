@@ -65,9 +65,10 @@ int main(int argc, char const *argv[])
 	double magnetization = 0.0; // variables to store the magnetization and energy density in.
 	double energy = 0.0;
 
+	/* Wanted to implement proper data file names, but strings in c were to much of a pain in the ass at this point */
 	// char bc[3], ord[2], spinmod[3], start[3];
-	if (boundary_condition == 1) { char bc[] = "pbc"; }
-	else { char bc[] = "dbc"; }
+	// if (boundary_condition == 1) { char bc[] = "pbc"; }
+	// else { char bc[] = "dbc"; }
 	// if (ordering == 1) { ord = 'bw'; }
 	// else { ord = 'lx'; }
 	// if (spinmodel == 1) { spinmod = 'clk'; }
@@ -82,13 +83,20 @@ int main(int argc, char const *argv[])
 	char filename[namesize];
 	char filename2[namesize];
 	char filename3[namesize];
+	// snprintf( filename, sizeof(filename),
+  // 	"data/monte_carlo_em_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], bc, ord, spinmodel, argv[8], argv[6], argv[10], argv[7], argv[9]);
+	//
+	// snprintf( filename2, sizeof(filename),
+	// 	"data/monte_carlo_corr_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], bc, ord, spinmodel, argv[8], argv[6], argv[10], argv[7], argv[9]);
+	// snprintf( filename3, sizeof(filename),
+	// 	"data/monte_carlo_config_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], bc, ord, spinmodel, argv[8], argv[6], argv[10], argv[7], argv[9]);
 	snprintf( filename, sizeof(filename),
-  	"data/monte_carlo_em_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], bc, ord, spinmodel, argv[8], argv[6], argv[10], argv[7], argv[9]);
+	  "data/monte_carlo_em_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9], argv[10]);
 
 	snprintf( filename2, sizeof(filename),
-		"data/monte_carlo_corr_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], bc, ord, spinmodel, argv[8], argv[6], argv[10], argv[7], argv[9]);
+		"data/monte_carlo_corr_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9], argv[10]);
 	snprintf( filename3, sizeof(filename),
-		"data/monte_carlo_config_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], bc, ord, spinmodel, argv[8], argv[6], argv[10], argv[7], argv[9]);
+		"data/monte_carlo_config_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s.txt", argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9], argv[10]);
 
 		// file for the energy density and the magnetization density.
 	fp = fopen(filename, "w");
