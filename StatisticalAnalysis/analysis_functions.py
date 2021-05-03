@@ -45,30 +45,28 @@ def autocorrelation(x,t):
 
 #input array,value --> data set, autocorrelation length
 #return value --> integer integration time
-def integ_time(func,tau):
+def integ_time(func,tmax):
     N  = len(func)
-    return 0.5 + np.array([np.exp(-t/tau) for t in range(1,N)]).sum()
+    return 0.5 + np.array([autocorrelation(func,t)/autocorrelation(func,0) for t in range(tmax)]).sum()
 
 #input array,value --> data set, autocorrelation time
 #return value --> mean variance when accounting for autocorrelation
-def mean_var_autocorr(func,tau):
-    if tau<0:
+def mean_var_autocorr(func,tmax):
+    if tmax<0:
         print("Error, Choose a positive tau\n")
         return -1
     N  = len(func)
-    #var_ac = np.zero(len(func))
-    ac_t = 0.5 + np.array([np.exp(-t/tau) for t in range(1,N)]).sum()
-    var_ac = var(func)*2/N*ac_t
-    return var_ac
+    ac_t = integ_time(func,tmax)
+    mvar_ac = mean_var(func)*2*ac_t
+    return mvar_ac
 
 #input array, value --> data set, size of bin
 #return array --> binned data
 def binning (x,m):
     if len(x)%m != 0:
-        print("error, choose different bin size")
+        print("Error, choose different bin size")
         return -1
     num_bins = int(len(x)/m)
-       
     bins = np.zeros(num_bins)
     for k in range(num_bins):
         bins[k] = 1/m*np.array([x[n]for n in range(m*k, m*(k+1))]).sum()
